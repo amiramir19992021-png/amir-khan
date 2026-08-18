@@ -3,31 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>امیرخوان - نمایش کامل خبر</title>
+    <title>امیرخوان - لینک به خبر کامل</title>
     <style>
         body { font-family: Tahoma; background: #f0f2f5; padding: 20px; direction: rtl; }
         .box { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 25px; }
-        .news-item { 
-            background: #f1f5f9; 
-            padding: 12px; 
-            margin: 8px 0; 
-            border-radius: 12px; 
-            border-right: 4px solid #3b82f6; 
-            cursor: pointer;
+        .news-item {
+            background: #f1f5f9;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 12px;
+            border-right: 4px solid #3b82f6;
             transition: 0.2s;
         }
         .news-item:hover { background: #e2e8f0; }
-        .news-item .summary {
-            display: none;
-            margin-top: 10px;
-            padding: 10px;
-            background: white;
-            border-radius: 8px;
-            border-right: 2px solid #64748b;
-            font-size: 0.9em;
+        .news-item a {
+            text-decoration: none;
             color: #1e293b;
+            display: block;
         }
-        .news-item .summary.active { display: block; }
+        .news-item a:hover { color: #3b82f6; }
+        .news-item .summary {
+            font-size: 0.9em;
+            color: #64748b;
+            margin-top: 5px;
+        }
         button { width: 100%; padding: 14px; background: #3b82f6; color: white; border: none; border-radius: 30px; font-size: 18px; margin-top: 10px; cursor: pointer; }
         #result { background: #f8fafc; padding: 15px; border-radius: 12px; margin-top: 15px; display: none; white-space: pre-wrap; }
         .tabs { display: flex; gap: 10px; margin: 15px 0; flex-wrap: wrap; }
@@ -35,15 +34,6 @@
         .tabs .active { background: #1e293b; color: white; }
         .loading { color: #64748b; text-align: center; padding: 20px; }
         .section-title { margin-top: 25px; border-top: 2px solid #e2e8f0; padding-top: 15px; }
-        .full-news {
-            background: #f8fafc;
-            padding: 15px;
-            border-radius: 12px;
-            margin-top: 15px;
-            display: none;
-            border-right: 4px solid #3b82f6;
-        }
-        .full-news.active { display: block; }
     </style>
 </head>
 <body>
@@ -61,8 +51,6 @@
         
         <div id="newsList"><div class="loading">⏳ انتخاب کنید...</div></div>
 
-        <div id="fullNews" class="full-news"></div>
-
         <h2>🔎 تحلیل خبر</h2>
         <textarea id="newsText" placeholder="متن خبر را وارد کن..."></textarea>
         <button id="analyzeBtn">✨ تحلیل کن</button>
@@ -75,10 +63,6 @@
         // ============================
         async function fetchNews(rssUrl) {
             const list = document.getElementById('newsList');
-            const fullNews = document.getElementById('fullNews');
-            fullNews.classList.remove('active');
-            fullNews.innerHTML = '';
-            
             list.innerHTML = '<div class="loading">⏳ در حال بارگذاری...</div>';
             try {
                 const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
@@ -86,37 +70,22 @@
                 const data = await response.json();
 
                 if (data.items && data.items.length > 0) {
-                    list.innerHTML = data.items.slice(0, 10).map((item, index) => {
-                        // ایجاد خلاصه از محتوای خبر
-                        const description = item.description || item.content || 'متن کامل این خبر در دسترس نیست.';
-                        const summary = description.length > 150 ? description.substring(0, 150) + '...' : description;
+                    list.innerHTML = data.items.slice(0, 10).map(item => {
+                        // استخراج لینک خبر
+                        const link = item.link || '#';
+                        // استخراج خلاصه (لید)
+                        const summary = item.description || item.content || 'متن کامل این خبر در خبرگزاری قابل مشاهده است.';
+                        const shortSummary = summary.length > 100 ? summary.substring(0, 100) + '...' : summary;
                         
                         return `
-                            <div class="news-item" data-index="${index}" data-title="${item.title}" data-description="${description.replace(/"/g, '&quot;')}">
-                                📰 ${item.title}
-                                <div class="summary">${summary}</div>
+                            <div class="news-item">
+                                <a href="${link}" target="_blank">
+                                    📰 ${item.title}
+                                    <div class="summary">${shortSummary}</div>
+                                </a>
                             </div>
                         `;
                     }).join('');
-                    
-                    // اضافه کردن رویداد کلیک به هر خبر
-                    document.querySelectorAll('.news-item').forEach(item => {
-                        item.addEventListener('click', function() {
-                            const title = this.getAttribute('data-title');
-                            const description = this.getAttribute('data-description');
-                            
-                            // نمایش متن کامل در بخش پایین
-                            const fullNews = document.getElementById('fullNews');
-                            fullNews.innerHTML = `
-                                <h3>📄 ${title}</h3>
-                                <p>${description}</p>
-                            `;
-                            fullNews.classList.add('active');
-                            
-                            // اسکرول به بخش متن کامل
-                            fullNews.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        });
-                    });
                 } else {
                     list.innerHTML = '<div class="news-item">📭 خبری برای نمایش وجود ندارد.</div>';
                 }
