@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>امیرخوان - ایرنا، مهر و فارس</title>
+    <title>امیرخوان - ایرنا، مهر و ایمنا</title>
     <style>
         body { font-family: Tahoma; background: #f0f2f5; padding: 20px; direction: rtl; }
         .box { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 25px; }
@@ -14,6 +14,7 @@
         .tabs button { flex: 1; padding: 10px; background: #e2e8f0; border: none; border-radius: 20px; cursor: pointer; min-width: 60px; }
         .tabs .active { background: #1e293b; color: white; }
         .loading { color: #64748b; text-align: center; padding: 20px; }
+        .section-title { margin-top: 25px; border-top: 2px solid #e2e8f0; padding-top: 15px; }
     </style>
 </head>
 <body>
@@ -22,11 +23,13 @@
         <p>دستیار هوشمند رسانه</p>
 
         <h2>📡 رادار خبری</h2>
+        <div class="section-title">🇮🇷 خبرگزاری‌های داخلی</div>
         <div class="tabs">
-            <button class="active" data-url="https://www.irna.ir/rss">🇮🇷 ایرنا</button>
-            <button data-url="https://www.mehrnews.com/rss">🇮🇷 مهر</button>
-            <button data-url="https://www.farsnews.ir/rss">🇮🇷 فارس</button>
+            <button class="active" data-url="https://www.irna.ir/rss">ایرنا</button>
+            <button data-url="https://www.mehrnews.com/rss">مهر</button>
+            <button data-url="https://www.imna.ir/rss">ایمنا</button>
         </div>
+        
         <div id="newsList"><div class="loading">⏳ انتخاب کنید...</div></div>
 
         <h2>🔎 تحلیل خبر</h2>
