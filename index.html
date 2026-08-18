@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>امیرخوان - کامل با چت‌بات</title>
+    <title>امیرخوان - نسخه کامل</title>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
@@ -314,24 +314,6 @@
 
 <script>
 // ================================
-//  ترجمه با گوگل
-// ================================
-async function translateText(text) {
-    if (!text || text.length < 2) return text;
-    try {
-        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=fa&dt=t&q=${encodeURIComponent(text)}`;
-        const response = await fetch(url);
-        const data = await response.json();
-        if (data && data[0]) {
-            return data[0].map(item => item[0]).join('');
-        }
-        return text;
-    } catch {
-        return text;
-    }
-}
-
-// ================================
 //  تحلیل خبر
 // ================================
 function analyzeNews(text) {
@@ -454,11 +436,13 @@ async function fetchNews(rssUrl, fromLang) {
             const views = Math.floor(Math.random() * 500) + 50;
             const credibility = Math.floor(Math.random() * 5) + 5;
 
+            // برای خبرهای خارجی، خلاصه دوزبانه رو آماده کن
             let summaryEn = '';
             let summaryFa = '';
             if (isForeign) {
                 summaryEn = summary;
-                summaryFa = await translateText(summary);
+                // یک ترجمه‌ی ساده‌ی ساختگی برای نمایش (فقط برای نمونه)
+                summaryFa = '🔹 این خبر به زبان انگلیسی است. برای مشاهده‌ی ترجمه، روی دکمه‌ی ترجمه در گوگل کلیک کنید.';
             }
 
             html += `
@@ -480,6 +464,9 @@ async function fetchNews(rssUrl, fromLang) {
                         ${isForeign ? `
                             <div class="summary-en">🇬🇧 ${summaryEn}</div>
                             <div class="summary-fa">🇮🇷 ${summaryFa}</div>
+                            <div style="margin-top:6px;">
+                                <a href="https://translate.google.com/translate?sl=en&tl=fa&u=${encodeURIComponent(link)}" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:500;">🌐 ترجمه با گوگل</a>
+                            </div>
                         ` : `
                             <div>${summary}</div>
                         `}
@@ -506,4 +493,5 @@ async function fetchNews(rssUrl, fromLang) {
             });
         });
 
-    } cat
+    } catch (error) {
+        container.innerHTML = '<div class="no-news">⚠
