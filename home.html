@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>امیرخوان - خانه</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Tahoma', sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            direction: rtl;
+        }
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 28px;
+            padding: 25px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        }
+        h1 {
+            color: #1e293b;
+            text-align: center;
+        }
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-top: -10px;
+            margin-bottom: 25px;
+        }
+        textarea {
+            width: 100%;
+            height: 80px;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 12px;
+            font-family: inherit;
+            font-size: 16px;
+            resize: vertical;
+        }
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: 0.2s;
+        }
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+        #result {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 16px;
+            margin-top: 15px;
+            display: none;
+            white-space: pre-wrap;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .tabs button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 30px;
+            background: #f1f5f9;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .tabs button.active {
+            background: #1e293b;
+            color: white;
+        }
+        .news-item {
+            background: #f8fafc;
+            padding: 14px 18px;
+            margin-bottom: 10px;
+            border-radius: 14px;
+            border-right: 5px solid #3b82f6;
+            color: #1e293b;
+        }
+        .alert {
+            background: #fee2e2;
+            border-right-color: #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧠 امیرخوان</h1>
+        <p class="subtitle">دستیار هوشمند رسانه</p>
+
+        <!-- بخش تحلیل -->
+        <h2>🔎 تحلیل خبر</h2>
+        <textarea id="newsText" placeholder="لینک یا متن خبر را وارد کن..."></textarea>
+        <button class="btn-primary" id="analyzeBtn">✨ تحلیل کن</button>
+        <div id="result"></div>
+
+        <!-- بخش رادار -->
+        <h2 style="margin-top: 30px;">📡 رادار خبری</h2>
+        <div class="tabs">
+            <button class="active" data-category="iran">🇮🇷 ایران</button>
+            <button data-category="world">🌍 جهان</button>
+        </div>
+        <div id="newsList">
+            <!-- اخبار توسط جاوااسکریپت پر می‌شود -->
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        //  پایگاه داده‌ی اخبار
+        // ========================================
+        const newsData = {
+            iran: [
+                '🔥 قیمت دلار امروز در بازار آزاد به ۶۰,۵۰۰ تومان رسید',
+                '📈 اعلام نتایج نهایی کنکور سراسری ۱۴۰۵',
+                '⚠️ هشدار سطح نارنجی هواشناسی برای تهران و البرز',
+                '🏛️ جلسه غیرعلنی مجلس با حضور وزیر اقتصاد',
+                '📊 کاهش ۰.۵ درصدی نرخ بیکاری در فصل بهار'
+            ],
+            world: [
+                '🌍 تشدید تنش‌ها در مرزهای اوکراین و روسیه',
+                '📈 سقوط آزاد قیمت نفت در بازارهای جهانی',
+                '⚠️ هشدار قرمز سازمان بهداشت درباره موج جدید کرونا',
+                '🏛️ پیروزی حزب چپ در انتخابات فرانسه',
+                '📊 افزایش ۲.۱ درصدی تولید ناخالص داخلی چین'
+            ]
+        };
+
+        // ========================================
+        //  نمایش اخبار
+        // ========================================
+        function renderNews(category) {
+            const list = document.getElementById('newsList');
+            const items = newsData[category] || ['📭 خبری برای نمایش وجود ندارد.'];
+            list.innerHTML = items.map(text => `<div class="news-item">${text}</div>`).join('');
+        }
+
+        // ========================================
+        //  رویدادهای دکمه‌های زبانه
+        // ========================================
+        document.querySelectorAll('.tabs button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // تغییر کلاس active
+                document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                // نمایش اخبار مربوطه
+                const category = this.dataset.category;
+                renderNews(category);
+            });
+        });
+
+        // ========================================
+        //  رویداد دکمه‌ی تحلیل
+        // ========================================
+        document.getElementById('analyzeBtn').addEventListener('click', function() {
+            const text = document.getElementById('newsText').value.trim();
+            const resultDiv = document.getElementById('result');
+
+            if (text === '') {
+                alert('⚠️ لطفاً یک متن یا لینک خبر وارد کن.');
+                return;
+            }
+
+            // تحلیل ساده
+            const wordCount = text.split(/\s+/).length;
+            let analysis = `📊 تعداد کلمات: ${wordCount}\n`;
+            
+            if (text.includes('دولت') || text.includes('سیاست') || text.includes('رئیس‌جمهور')) {
+                analysis += '🏛️ محتوای سیاسی\n';
+            }
+            if (text.includes('دلار') || text.includes('قیمت') || text.includes('بازار')) {
+                analysis += '💰 محتوای اقتصادی\n';
+            }
+            if (text.includes('سلامت') || text.includes('درمان') || text.includes('بیمارستان')) {
+                analysis += '🏥 محتوای سلامت\n';
+            }
+            if (wordCount > 20) {
+                analysis += '📝 خبر مفصل\n';
+            } else {
+                analysis += '📝 خبر کوتاه\n';
+            }
+
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = analysis;
+        });
+
+        // ========================================
+        //  بارگذاری اولیه (ایران)
+        // ========================================
+        renderNews('iran');
+    </script>
+</body>
+</html>
