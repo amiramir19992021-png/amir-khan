@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحلیل‌گر امیرخوان</title>
+    <style>
+        body {
+            font-family: Tahoma;
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            direction: rtl;
+        }
+        .box {
+            background: white;
+            padding: 30px;
+            border-radius: 30px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            border-radius: 16px;
+            border: 2px solid #ddd;
+            padding: 12px;
+            font-size: 16px;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+        button {
+            margin-top: 15px;
+            padding: 14px 40px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 16px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>🧠 تحلیل‌گر امیرخوان</h1>
+        <p>متن خبر را وارد کن و روی دکمه بزن</p>
+        <textarea id="newsText" placeholder="متن خبر را اینجا بنویس..."></textarea>
+        <button id="analyzeBtn">✨ تحلیل کن</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById('analyzeBtn').addEventListener('click', function() {
+            const text = document.getElementById('newsText').value.trim();
+            const resultDiv = document.getElementById('result');
+
+            if (text === '') {
+                alert('⚠️ لطفاً یک متن وارد کن.');
+                return;
+            }
+
+            // تحلیل ساده
+            const words = text.split(' ');
+            const wordCount = words.length;
+            const hasPolitical = text.includes('دولت') || text.includes('سیاست') || text.includes('رئیس‌جمهور');
+            const hasEconomic = text.includes('دلار') || text.includes('قیمت') || text.includes('بازار');
+
+            let analysis = `📊 تعداد کلمات: ${wordCount}\n`;
+            analysis += hasPolitical ? '🏛️ این خبر دارای محتوای سیاسی است.\n' : '';
+            analysis += hasEconomic ? '💰 این خبر دارای محتوای اقتصادی است.\n' : '';
+            analysis += wordCount > 20 ? '📝 این خبر نسبتاً مفصل است.\n' : '📝 این خبر کوتاه است.\n';
+
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `<pre style="text-align:right;font-family:Tahoma;">${analysis}</pre>`;
+        });
+    </script>
+</body>
+</html>
