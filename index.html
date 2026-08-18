@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>امیرخوان - ایرنا، مهر و ایسنا</title>
+    <title>امیرخوان - ایرنا، مهر و فارس</title>
     <style>
         body { font-family: Tahoma; background: #f0f2f5; padding: 20px; direction: rtl; }
         .box { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 25px; }
@@ -23,9 +23,9 @@
 
         <h2>📡 رادار خبری</h2>
         <div class="tabs">
-            <button class="active" data-url="irna">🇮🇷 ایرنا</button>
-            <button data-url="mehr">🇮🇷 مهر</button>
-            <button data-url="isna">🇮🇷 ایسنا</button>
+            <button class="active" data-url="https://www.irna.ir/rss">🇮🇷 ایرنا</button>
+            <button data-url="https://www.mehrnews.com/rss">🇮🇷 مهر</button>
+            <button data-url="https://www.farsnews.ir/rss">🇮🇷 فارس</button>
         </div>
         <div id="newsList"><div class="loading">⏳ انتخاب کنید...</div></div>
 
@@ -39,15 +39,9 @@
         // ============================
         //  دریافت اخبار از RSS
         // ============================
-        async function fetchNews(source) {
+        async function fetchNews(rssUrl) {
             const list = document.getElementById('newsList');
             list.innerHTML = '<div class="loading">⏳ در حال بارگذاری...</div>';
-            
-            let rssUrl = '';
-            if (source === 'irna') rssUrl = 'https://www.irna.ir/rss';
-            else if (source === 'mehr') rssUrl = 'https://www.mehrnews.com/rss';
-            else if (source === 'isna') rssUrl = 'https://www.isna.ir/rss';
-
             try {
                 const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
                 const response = await fetch(apiUrl);
@@ -61,28 +55,8 @@
                     list.innerHTML = '<div class="news-item">📭 خبری برای نمایش وجود ندارد.</div>';
                 }
             } catch (error) {
-                // اگر rss2json کار نکرد، برای ایسنا از روش جایگزین استفاده کن
-                if (source === 'isna') {
-                    try {
-                        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent('https://www.isna.ir/rss')}`;
-                        const response = await fetch(proxyUrl);
-                        const text = await response.text();
-                        // استخراج ساده عناوین از XML
-                        const titles = text.match(/<title>(.*?)<\/title>/g);
-                        if (titles && titles.length > 1) {
-                            const items = titles.slice(1, 11).map(title => 
-                                `<div class="news-item">📰 ${title.replace(/<title>|<\/title>/g, '')}</div>`
-                            ).join('');
-                            list.innerHTML = items;
-                        } else {
-                            list.innerHTML = '<div class="news-item">📭 خبری برای نمایش وجود ندارد.</div>';
-                        }
-                    } catch (proxyError) {
-                        list.innerHTML = '<div class="news-item">⚠️ خطا در دریافت اخبار ایسنا.</div>';
-                    }
-                } else {
-                    list.innerHTML = '<div class="news-item">⚠️ خطا در دریافت اخبار. لطفاً دوباره تلاش کنید.</div>';
-                }
+                list.innerHTML = '<div class="news-item">⚠️ خطا در دریافت اخبار. لطفاً دوباره تلاش کنید.</div>';
+                console.log('خطا:', error);
             }
         }
 
@@ -93,8 +67,8 @@
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
-                const source = this.getAttribute('data-url');
-                fetchNews(source);
+                const url = this.getAttribute('data-url');
+                fetchNews(url);
             });
         });
 
@@ -122,7 +96,7 @@
         // ============================
         //  بارگذاری اولیه (ایرنا)
         // ============================
-        fetchNews('irna');
+        fetchNews('https://www.irna.ir/rss');
     </script>
 </body>
 </html>
