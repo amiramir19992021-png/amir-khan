@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>امیرخوان</title>
+    <style>
+        body { font-family: Tahoma; background: #f0f2f5; padding: 20px; direction: rtl; }
+        .box { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 25px; }
+        textarea { width: 100%; height: 80px; border-radius: 12px; border: 2px solid #ddd; padding: 10px; }
+        button { width: 100%; padding: 14px; background: #3b82f6; color: white; border: none; border-radius: 30px; font-size: 18px; margin-top: 10px; cursor: pointer; }
+        .news-item { background: #f1f5f9; padding: 12px; margin: 8px 0; border-radius: 12px; border-right: 4px solid #3b82f6; }
+        #result { background: #f8fafc; padding: 15px; border-radius: 12px; margin-top: 15px; display: none; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>🧠 امیرخوان</h1>
+        <p>دستیار هوشمند رسانه</p>
+
+        <h2>🔎 تحلیل خبر</h2>
+        <textarea id="newsText" placeholder="متن خبر را وارد کن..."></textarea>
+        <button id="analyzeBtn">✨ تحلیل کن</button>
+        <div id="result"></div>
+
+        <h2>📡 رادار خبری</h2>
+        <div id="newsList">
+            <div class="news-item">🔥 قیمت دلار امروز در بازار آزاد به ۶۰,۵۰۰ تومان رسید</div>
+            <div class="news-item">📈 اعلام نتایج نهایی کنکور سراسری ۱۴۰۵</div>
+            <div class="news-item">⚠️ هشدار سطح نارنجی هواشناسی برای تهران و البرز</div>
+            <div class="news-item">🏛️ جلسه غیرعلنی مجلس با حضور وزیر اقتصاد</div>
+            <div class="news-item">📊 کاهش ۰.۵ درصدی نرخ بیکاری در فصل بهار</div>
+        </div>
+    </div>
+
+    <script>
+        // دکمه تحلیل
+        document.getElementById('analyzeBtn').addEventListener('click', function() {
+            const text = document.getElementById('newsText').value.trim();
+            const resultDiv = document.getElementById('result');
+
+            if (text === '') {
+                alert('⚠️ لطفاً یک متن برای تحلیل وارد کن.');
+                return;
+            }
+
+            const words = text.split(' ');
+            let analysis = `📊 تعداد کلمات: ${words.length}\n`;
+            if (text.includes('دولت') || text.includes('سیاست')) analysis += '🏛️ محتوای سیاسی\n';
+            if (text.includes('دلار') || text.includes('قیمت')) analysis += '💰 محتوای اقتصادی\n';
+
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = analysis;
+        });
+    </script>
+</body>
+</html>
