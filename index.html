@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>امیرخوان - اخبار زنده</title>
+    <title>امیرخوان - اخبار نمونه</title>
     <style>
         body { font-family: Tahoma; background: #f0f2f5; padding: 20px; margin: 0; direction: rtl; }
         .container { max-width: 700px; margin: auto; background: white; border-radius: 30px; padding: 25px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
@@ -26,17 +26,59 @@
         <button id="analyzeBtn">✨ تحلیل کن</button>
         <div id="result"></div>
 
-        <h2>📡 رادار خبری زنده</h2>
+        <h2>📡 رادار خبری</h2>
         <div class="tabs">
             <button id="iranTab" class="active">🇮🇷 ایران</button>
             <button id="worldTab">🌍 جهان</button>
         </div>
-        <div id="newsList">
-            <div class="news-item">⏳ بارگذاری اخبار...</div>
-        </div>
+        <div id="newsList"></div>
     </div>
 
     <script>
+        // ============================
+        // داده‌های اخبار نمونه
+        // ============================
+        const newsData = {
+            iran: [
+                '🔥 قیمت دلار امروز در بازار آزاد به ۶۰ هزار تومان رسید',
+                '📈 اعلام نتایج نهایی کنکور سراسری ۱۴۰۵',
+                '⚠️ هشدار سطح نارنجی هواشناسی برای تهران و استان‌های شمالی',
+                '🏛️ نشست خبری سخنگوی دولت درباره بودجه سال آینده',
+                '📊 نرخ بیکاری در کشور به ۸.۵ درصد کاهش یافت'
+            ],
+            world: [
+                '🌍 تنش‌های جدید در مرزهای اوکراین و روسیه',
+                '📈 قیمت نفت به بالاترین سطح در ۳ ماه اخیر رسید',
+                '⚠️ هشدار سازمان بهداشت جهانی درباره شیوع آبله میمون',
+                '🏛️ انتخابات ریاست‌جمهوری در فرانسه وارد مرحله‌ی دوم شد',
+                '📊 گزارش جدید از رشد اقتصادی چین در سه ماهه‌ی اول'
+            ]
+        };
+
+        // ============================
+        // نمایش اخبار
+        // ============================
+        function showNews(category) {
+            const list = document.getElementById('newsList');
+            const items = newsData[category];
+            list.innerHTML = items.map(item => `<div class="news-item">${item}</div>`).join('');
+        }
+
+        // ============================
+        // دکمه‌های ایران و جهان
+        // ============================
+        document.getElementById('iranTab').addEventListener('click', function() {
+            document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            showNews('iran');
+        });
+
+        document.getElementById('worldTab').addEventListener('click', function() {
+            document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            showNews('world');
+        });
+
         // ============================
         // تحلیل خبر
         // ============================
@@ -49,75 +91,23 @@
             }
             const words = text.split(' ');
             let analysis = `📊 تعداد کلمات: ${words.length}\n`;
-            if (text.includes('دولت') || text.includes('سیاست')) analysis += '🏛️ محتوای سیاسی\n';
-            if (text.includes('دلار') || text.includes('قیمت')) analysis += '💰 محتوای اقتصادی\n';
+            if (text.includes('دولت') || text.includes('سیاست') || text.includes('رئیس‌جمهور')) 
+                analysis += '🏛️ این خبر دارای محتوای سیاسی است.\n';
+            if (text.includes('دلار') || text.includes('قیمت') || text.includes('بازار')) 
+                analysis += '💰 این خبر دارای محتوای اقتصادی است.\n';
+            if (words.length > 20) 
+                analysis += '📝 این خبر نسبتاً مفصل است.\n';
+            else 
+                analysis += '📝 این خبر کوتاه است.\n';
+            
             resultDiv.style.display = 'block';
             resultDiv.textContent = analysis;
         });
 
         // ============================
-        // دریافت اخبار زنده از API
-        // ============================
-        async function fetchNews(country) {
-            const list = document.getElementById('newsList');
-            list.innerHTML = '<div class="news-item">⏳ دریافت اخبار...</div>';
-
-            try {
-                // استفاده از API رایگان (بدون نیاز به کلید)
-                const url = country === 'ir' 
-                    ? 'https://newsapi.org/v2/top-headlines?country=ir&apiKey=YOUR_API_KEY'
-                    : 'https://newsapi.org/v2/top-headlines?country=us&apiKey=YOUR_API_KEY';
-
-                const response = await fetch(url);
-                const data = await response.json();
-
-                if (data.articles && data.articles.length > 0) {
-                    list.innerHTML = data.articles.slice(0, 6).map(article => 
-                        `<div class="news-item">📰 ${article.title}</div>`
-                    ).join('');
-                } else {
-                    list.innerHTML = '<div class="news-item">📭 خبری برای نمایش وجود ندارد.</div>';
-                }
-            } catch (error) {
-                // اگر API خطا داد، از داده‌های نمونه استفاده کن
-                const sampleNews = {
-                    ir: [
-                        '🔥 قیمت دلار امروز در بازار آزاد',
-                        '📈 اعلام نتایج نهایی کنکور ۱۴۰۵',
-                        '⚠️ هشدار سطح نارنجی هواشناسی',
-                        '🏛️ نشست خبری سخنگوی دولت',
-                        '📊 نرخ بیکاری در کشور کاهش یافت'
-                    ],
-                    us: [
-                        '🌍 تنش‌های جدید در خاورمیانه',
-                        '📈 افزایش قیمت نفت در بازارهای جهانی',
-                        '⚠️ هشدار سازمان بهداشت درباره آبله میمون',
-                        '🏛️ انتخابات ریاست‌جمهوری در فرانسه',
-                        '📊 گزارش جدید از وضعیت اقتصاد چین'
-                    ]
-                };
-                const news = sampleNews[country] || ['📭 خبری موجود نیست.'];
-                list.innerHTML = news.map(item => `<div class="news-item">${item}</div>`).join('');
-            }
-        }
-
-        // ============================
-        // دکمه‌های ایران و جهان
-        // ============================
-        document.getElementById('iranTab').addEventListener('click', function() {
-            document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            fetchNews('ir');
-        });
-
-        document.getElementById('worldTab').addEventListener('click', function() {
-            document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            fetchNews('us');
-        });
-
         // بارگذاری اولیه (ایران)
-        fetchNews('ir');
+        // ============================
+        showNews('iran');
     </script>
 </body>
 </html>
