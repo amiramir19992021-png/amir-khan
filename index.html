@@ -244,6 +244,113 @@
             border-radius: 12px;
             border: 1px dashed #e2e8f0;
         }
+        /* چت‌بات */
+        #chatbot-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            font-family: Tahoma, sans-serif;
+        }
+        #chat-toggle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #2563eb;
+            border: none;
+            color: #fff;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(37,99,235,0.4);
+            transition: 0.3s;
+        }
+        #chat-toggle:hover { transform: scale(1.05); }
+        #chat-window {
+            display: none;
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 340px;
+            height: 450px;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            flex-direction: column;
+        }
+        #chat-window .chat-header {
+            background: #2563eb;
+            padding: 14px 18px;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        #chat-window .chat-header button {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        #chat-messages {
+            flex: 1;
+            padding: 12px 16px;
+            overflow-y: auto;
+            background: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            height: 320px;
+        }
+        #chat-messages .bot {
+            background: #e2e8f0;
+            padding: 8px 14px;
+            border-radius: 16px;
+            border-bottom-right-radius: 4px;
+            max-width: 85%;
+            align-self: flex-start;
+            font-size: 14px;
+            color: #1e293b;
+        }
+        #chat-messages .user {
+            background: #2563eb;
+            padding: 8px 14px;
+            border-radius: 16px;
+            border-bottom-left-radius: 4px;
+            max-width: 85%;
+            align-self: flex-end;
+            font-size: 14px;
+            color: #fff;
+        }
+        #chat-input-area {
+            padding: 12px 16px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: 8px;
+            background: #fff;
+        }
+        #chat-input-area input {
+            flex: 1;
+            padding: 8px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 30px;
+            outline: none;
+            font-size: 14px;
+        }
+        #chat-input-area button {
+            padding: 8px 18px;
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        @media (max-width: 480px) {
+            #chat-window { width: 290px; height: 400px; right: -10px; }
+        }
     </style>
 </head>
 <body>
@@ -291,23 +398,19 @@
 <!-- ===================================== -->
 <!-- چت‌بات امیرخوان (Gemini)              -->
 <!-- ===================================== -->
-<div id="chatbot-container" style="position:fixed; bottom:20px; right:20px; z-index:9999; font-family:Tahoma, sans-serif;">
-    <button id="chat-toggle" style="width:60px; height:60px; border-radius:50%; background:#2563eb; border:none; color:#fff; font-size:28px; cursor:pointer; box-shadow:0 8px 25px rgba(37,99,235,0.4); transition:0.3s;">
-        💬
-    </button>
-    <div id="chat-window" style="display:none; position:absolute; bottom:80px; right:0; width:340px; height:450px; background:#ffffff; border-radius:20px; box-shadow:0 12px 40px rgba(0,0,0,0.15); overflow:hidden; border:1px solid #e2e8f0; flex-direction:column;">
-        <div style="background:#2563eb; padding:14px 18px; color:#fff; display:flex; justify-content:space-between; align-items:center;">
-            <span style="font-weight:600;">🤖 امیرخوان یار</span>
-            <button id="chat-close" style="background:none; border:none; color:#fff; font-size:20px; cursor:pointer;">✕</button>
+<div id="chatbot-container">
+    <button id="chat-toggle">💬</button>
+    <div id="chat-window">
+        <div class="chat-header">
+            <span>🤖 امیرخوان یار</span>
+            <button id="chat-close">✕</button>
         </div>
-        <div id="chat-messages" style="flex:1; padding:12px 16px; overflow-y:auto; background:#f8fafc; display:flex; flex-direction:column; gap:8px; height:320px;">
-            <div style="background:#e2e8f0; padding:8px 14px; border-radius:16px; border-bottom-right-radius:4px; max-width:85%; align-self:flex-start; font-size:14px; color:#1e293b;">
-                👋 سلام! من امیرخوان یار هستم. هر سوالی درباره‌ی اخبار داری، بپرس.
-            </div>
+        <div id="chat-messages">
+            <div class="bot">👋 سلام! من امیرخوان یار هستم. هر سوالی درباره‌ی اخبار داری، بپرس.</div>
         </div>
-        <div style="padding:12px 16px; border-top:1px solid #e2e8f0; display:flex; gap:8px; background:#fff;">
-            <input id="chat-input" type="text" placeholder="سوال خود را بپرس..." style="flex:1; padding:8px 14px; border:1px solid #e2e8f0; border-radius:30px; outline:none; font-size:14px;">
-            <button id="chat-send" style="padding:8px 18px; background:#2563eb; color:#fff; border:none; border-radius:30px; cursor:pointer; font-weight:600;">➤</button>
+        <div id="chat-input-area">
+            <input id="chat-input" type="text" placeholder="سوال خود را بپرس...">
+            <button id="chat-send">➤</button>
         </div>
     </div>
 </div>
@@ -436,12 +539,10 @@ async function fetchNews(rssUrl, fromLang) {
             const views = Math.floor(Math.random() * 500) + 50;
             const credibility = Math.floor(Math.random() * 5) + 5;
 
-            // برای خبرهای خارجی، خلاصه دوزبانه رو آماده کن
             let summaryEn = '';
             let summaryFa = '';
             if (isForeign) {
                 summaryEn = summary;
-                // یک ترجمه‌ی ساده‌ی ساختگی برای نمایش (فقط برای نمونه)
                 summaryFa = '🔹 این خبر به زبان انگلیسی است. برای مشاهده‌ی ترجمه، روی دکمه‌ی ترجمه در گوگل کلیک کنید.';
             }
 
@@ -461,37 +562,4 @@ async function fetchNews(rssUrl, fromLang) {
                     
                     <div class="summary-box">
                         <div class="summary-title">📌 خلاصه خبر</div>
-                        ${isForeign ? `
-                            <div class="summary-en">🇬🇧 ${summaryEn}</div>
-                            <div class="summary-fa">🇮🇷 ${summaryFa}</div>
-                            <div style="margin-top:6px;">
-                                <a href="https://translate.google.com/translate?sl=en&tl=fa&u=${encodeURIComponent(link)}" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:500;">🌐 ترجمه با گوگل</a>
-                            </div>
-                        ` : `
-                            <div>${summary}</div>
-                        `}
-                        <a href="${link}" target="_blank" class="read-more">🔗 مطالعه کامل خبر در منبع</a>
-                    </div>
-                </div>
-            `;
-        }
-
-        container.innerHTML = html;
-
-        document.querySelectorAll('.news-card').forEach(card => {
-            card.addEventListener('click', function(e) {
-                if (e.target.tagName === 'A') return;
-                const summaryBox = this.querySelector('.summary-box');
-                const isOpen = summaryBox.classList.contains('show');
-                document.querySelectorAll('.news-card .summary-box').forEach(el => el.classList.remove('show'));
-                if (!isOpen) {
-                    summaryBox.classList.add('show');
-                    setTimeout(() => {
-                        this.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 100);
-                }
-            });
-        });
-
-    } catch (error) {
-        container.innerHTML = '<div class="no-news">⚠
+                     
