@@ -1,31 +1,28 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>امیرخوان</title>
     <style>
-        * { box-sizing: border-box; }
-        body { font-family: Tahoma; background: #f0f2f5; padding: 15px; margin: 0; direction: rtl; }
-        .container { max-width: 700px; margin: auto; background: white; border-radius: 30px; padding: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
-        h1 { color: #1e293b; }
-        textarea { width: 100%; height: 80px; border-radius: 16px; border: 2px solid #ddd; padding: 12px; font-family: inherit; font-size: 16px; }
-        button { margin-top: 10px; padding: 14px; background: #3b82f6; color: white; border: none; border-radius: 30px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; }
-        #result { margin-top: 15px; padding: 15px; background: #f8fafc; border-radius: 16px; display: none; white-space: pre-wrap; }
+        body { font-family: Tahoma; text-align: center; padding: 30px; direction: rtl; background: #f0f2f5; }
+        .box { background: white; max-width: 500px; margin: auto; padding: 30px; border-radius: 30px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+        textarea { width: 100%; height: 80px; border-radius: 16px; border: 2px solid #ddd; padding: 12px; font-family: inherit; }
+        button { margin-top: 15px; padding: 14px 40px; background: #3b82f6; color: white; border: none; border-radius: 30px; font-size: 18px; cursor: pointer; width: 100%; }
+        .news-item { background: #f1f5f9; padding: 12px; margin: 8px 0; border-radius: 12px; border-right: 4px solid #3b82f6; text-align: right; }
+        #result { background: #f8fafc; padding: 15px; border-radius: 16px; margin-top: 15px; display: none; white-space: pre-wrap; text-align: right; }
         .tabs { display: flex; gap: 10px; margin: 15px 0; }
         .tabs button { flex: 1; padding: 12px; border: none; border-radius: 30px; background: #e2e8f0; font-weight: bold; cursor: pointer; }
         .tabs .active { background: #1e293b; color: white; }
-        .news-item { background: #f1f5f9; padding: 12px; margin: 8px 0; border-radius: 12px; border-right: 4px solid #3b82f6; }
-        .error { color: red; }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="box">
         <h1>🧠 امیرخوان</h1>
         <p>دستیار هوشمند رسانه</p>
 
         <h2>🔎 تحلیل خبر</h2>
-        <textarea id="newsText" placeholder="متن خبر را وارد کن..."></textarea>
+        <textarea id="newsText" placeholder="متن خود را اینجا بنویس..."></textarea>
         <button id="analyzeBtn">✨ تحلیل کن</button>
         <div id="result"></div>
 
@@ -72,11 +69,8 @@
         // ==========================================
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', function() {
-                // حذف کلاس active از همه
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                // اضافه کردن به این دکمه
                 this.classList.add('active');
-                // نمایش اخبار
                 const category = this.getAttribute('data-category');
                 displayNews(category);
             });
@@ -89,13 +83,11 @@
             const text = document.getElementById('newsText').value.trim();
             const resultDiv = document.getElementById('result');
 
-            // اگر متن خالی بود
             if (text === '') {
                 alert('⚠️ لطفاً یک متن برای تحلیل وارد کن.');
                 return;
             }
 
-            // تحلیل ساده
             const words = text.split(' ');
             let analysis = `📊 تعداد کلمات: ${words.length}\n`;
 
@@ -111,7 +103,6 @@
                 analysis += '📝 این خبر کوتاه است.\n';
             }
 
-            // نمایش نتیجه
             resultDiv.style.display = 'block';
             resultDiv.textContent = analysis;
         });
