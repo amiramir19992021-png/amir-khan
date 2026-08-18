@@ -3,22 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>امیرخوان - ایرنا</title>
+    <title>امیرخوان - ایرنا و مهر</title>
     <style>
         body { font-family: Tahoma; background: #f0f2f5; padding: 20px; direction: rtl; }
         .box { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 25px; }
         .news-item { background: #f1f5f9; padding: 12px; margin: 8px 0; border-radius: 12px; border-right: 4px solid #3b82f6; }
         button { width: 100%; padding: 14px; background: #3b82f6; color: white; border: none; border-radius: 30px; font-size: 18px; margin-top: 10px; cursor: pointer; }
         #result { background: #f8fafc; padding: 15px; border-radius: 12px; margin-top: 15px; display: none; white-space: pre-wrap; }
+        .tabs { display: flex; gap: 10px; margin: 15px 0; flex-wrap: wrap; }
+        .tabs button { flex: 1; padding: 10px; background: #e2e8f0; border: none; border-radius: 20px; cursor: pointer; min-width: 60px; }
+        .tabs .active { background: #1e293b; color: white; }
+        .loading { color: #64748b; text-align: center; padding: 20px; }
     </style>
 </head>
 <body>
     <div class="box">
         <h1>🧠 امیرخوان</h1>
-        <p>دستیار هوشمند رسانه - اخبار ایرنا</p>
+        <p>دستیار هوشمند رسانه</p>
 
-        <h2>📡 آخرین اخبار ایرنا</h2>
-        <div id="newsList">⏳ در حال بارگذاری...</div>
+        <h2>📡 رادار خبری</h2>
+        <div class="tabs">
+            <button class="active" data-url="https://www.irna.ir/rss">🇮🇷 ایرنا</button>
+            <button data-url="https://www.mehrnews.com/rss">🇮🇷 مهر</button>
+        </div>
+        <div id="newsList"><div class="loading">⏳ انتخاب کنید...</div></div>
 
         <h2>🔎 تحلیل خبر</h2>
         <textarea id="newsText" placeholder="متن خبر را وارد کن..."></textarea>
@@ -28,15 +36,13 @@
 
     <script>
         // ============================
-        //  دریافت اخبار ایرنا از RSS
+        //  دریافت اخبار از RSS
         // ============================
-        async function fetchIrnaNews() {
+        async function fetchNews(rssUrl) {
             const list = document.getElementById('newsList');
+            list.innerHTML = '<div class="loading">⏳ در حال بارگذاری...</div>';
             try {
-                // استفاده از RSS ایرنا و تبدیل به JSON
-                const rssUrl = 'https://www.irna.ir/rss';
                 const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
-                
                 const response = await fetch(apiUrl);
                 const data = await response.json();
 
@@ -48,10 +54,22 @@
                     list.innerHTML = '<div class="news-item">📭 خبری برای نمایش وجود ندارد.</div>';
                 }
             } catch (error) {
-                list.innerHTML = '<div class="news-item">⚠️ خطا در دریافت اخبار. شاید اینترنت شما محدود است.</div>';
+                list.innerHTML = '<div class="news-item">⚠️ خطا در دریافت اخبار. لطفاً دوباره تلاش کنید.</div>';
                 console.log('خطا:', error);
             }
         }
+
+        // ============================
+        //  دکمه‌های رادار
+        // ============================
+        document.querySelectorAll('.tabs button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const url = this.getAttribute('data-url');
+                fetchNews(url);
+            });
+        });
 
         // ============================
         //  دکمه‌ی تحلیل
@@ -75,9 +93,9 @@
         });
 
         // ============================
-        //  بارگذاری اولیه
+        //  بارگذاری اولیه (ایرنا)
         // ============================
-        fetchIrnaNews();
+        fetchNews('https://www.irna.ir/rss');
     </script>
 </body>
 </html>
