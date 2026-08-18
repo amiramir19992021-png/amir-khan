@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>امیرخوان - لینک به خبر کامل</title>
+    <title>امیرخوان - کامل</title>
+    <!-- کتابخانه ترجمه -->
+    <script src="https://cdn.jsdelivr.net/npm/translate.js@1.0.0/translate.min.js"></script>
     <style>
         body { font-family: Tahoma; background: #f0f2f5; padding: 20px; direction: rtl; }
-        .box { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 25px; }
+        .box { max-width: 700px; margin: auto; background: white; padding: 25px; border-radius: 25px; }
         .news-item {
             background: #f1f5f9;
             padding: 12px;
@@ -27,13 +29,23 @@
             color: #64748b;
             margin-top: 5px;
         }
+        .news-item .translated {
+            font-size: 0.85em;
+            color: #0f172a;
+            background: #f8fafc;
+            padding: 6px 10px;
+            border-radius: 8px;
+            margin-top: 5px;
+            border-right: 2px solid #64748b;
+        }
         button { width: 100%; padding: 14px; background: #3b82f6; color: white; border: none; border-radius: 30px; font-size: 18px; margin-top: 10px; cursor: pointer; }
         #result { background: #f8fafc; padding: 15px; border-radius: 12px; margin-top: 15px; display: none; white-space: pre-wrap; }
-        .tabs { display: flex; gap: 10px; margin: 15px 0; flex-wrap: wrap; }
-        .tabs button { flex: 1; padding: 10px; background: #e2e8f0; border: none; border-radius: 20px; cursor: pointer; min-width: 60px; }
+        .tabs { display: flex; gap: 8px; margin: 10px 0; flex-wrap: wrap; }
+        .tabs button { flex: 1; padding: 8px; background: #e2e8f0; border: none; border-radius: 20px; cursor: pointer; min-width: 55px; font-size: 0.9em; }
         .tabs .active { background: #1e293b; color: white; }
         .loading { color: #64748b; text-align: center; padding: 20px; }
-        .section-title { margin-top: 25px; border-top: 2px solid #e2e8f0; padding-top: 15px; }
+        .section-title { margin-top: 20px; border-top: 2px solid #e2e8f0; padding-top: 12px; }
+        .section-title:first-of-type { border-top: none; margin-top: 0; padding-top: 0; }
     </style>
 </head>
 <body>
@@ -42,11 +54,35 @@
         <p>دستیار هوشمند رسانه</p>
 
         <h2>📡 رادار خبری</h2>
-        <div class="section-title">🇮🇷 خبرگزاری‌های داخلی</div>
+        
+        <div class="section-title">🇮🇷 داخلی</div>
         <div class="tabs">
-            <button class="active" data-url="https://www.irna.ir/rss">ایرنا</button>
-            <button data-url="https://www.mehrnews.com/rss">مهر</button>
-            <button data-url="https://www.imna.ir/rss">ایمنا</button>
+            <button class="active" data-url="https://www.irna.ir/rss" data-lang="fa">ایرنا</button>
+            <button data-url="https://www.mehrnews.com/rss" data-lang="fa">مهر</button>
+            <button data-url="https://www.imna.ir/rss" data-lang="fa">ایمنا</button>
+            <button data-url="https://www.tabnak.ir/fa/rss" data-lang="fa">تابناک</button>
+            <button data-url="https://www.donya-e-eqtesad.com/rss" data-lang="fa">دنیای اقتصاد</button>
+            <button data-url="https://www.entekhab.ir/rss" data-lang="fa">انتخاب</button>
+        </div>
+        
+        <div class="section-title">🌍 خارجی (با ترجمه)</div>
+        <div class="tabs">
+            <button data-url="https://www.aljazeera.net/feed/rss" data-lang="ar">الجزیره</button>
+            <button data-url="https://www.alalam.ir/fa/rss" data-lang="fa">العالم</button>
+            <button data-url="https://www.rt.com/rss" data-lang="en">راشا تودی</button>
+            <button data-url="https://feeds.reuters.com/reuters/worldnews" data-lang="en">رویترز</button>
+            <button data-url="https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml" data-lang="en">نیویورک تایمز</button>
+            <button data-url="https://www.theguardian.com/world/rss" data-lang="en">گاردین</button>
+            <button data-url="https://feeds.washingtonpost.com/rss/world" data-lang="en">واشنگتن پست</button>
+            <button data-url="https://www.nbcnews.com/feed" data-lang="en">ان‌بی‌سی</button>
+            <button data-url="https://www.cnbc.com/id/100003114/device/rss/rss.html" data-lang="en">سی‌ان‌بی‌سی</button>
+        </div>
+
+        <div class="section-title">📊 اقتصادی و فناوری</div>
+        <div class="tabs">
+            <button data-url="https://www.forbes.com/forbes/feed" data-lang="en">فوربز</button>
+            <button data-url="https://www.theverge.com/rss/index.xml" data-lang="en">ورج</button>
+            <button data-url="https://www.espn.com/espn/rss/news" data-lang="en">ای اس پی ان</button>
         </div>
         
         <div id="newsList"><div class="loading">⏳ انتخاب کنید...</div></div>
@@ -59,9 +95,22 @@
 
     <script>
         // ============================
-        //  دریافت اخبار از RSS
+        //  ترجمه متن
         // ============================
-        async function fetchNews(rssUrl) {
+        async function translateText(text, fromLang) {
+            try {
+                if (fromLang === 'fa') return text;
+                const translated = await translate(text, fromLang, 'fa');
+                return translated;
+            } catch (error) {
+                return text;
+            }
+        }
+
+        // ============================
+        //  دریافت و نمایش اخبار
+        // ============================
+        async function fetchNews(rssUrl, fromLang) {
             const list = document.getElementById('newsList');
             list.innerHTML = '<div class="loading">⏳ در حال بارگذاری...</div>';
             try {
@@ -70,22 +119,30 @@
                 const data = await response.json();
 
                 if (data.items && data.items.length > 0) {
-                    list.innerHTML = data.items.slice(0, 10).map(item => {
-                        // استخراج لینک خبر
+                    const items = data.items.slice(0, 5);
+                    let html = '';
+
+                    for (const item of items) {
                         const link = item.link || '#';
-                        // استخراج خلاصه (لید)
-                        const summary = item.description || item.content || 'متن کامل این خبر در خبرگزاری قابل مشاهده است.';
-                        const shortSummary = summary.length > 100 ? summary.substring(0, 100) + '...' : summary;
-                        
-                        return `
+                        const title = item.title || 'بدون عنوان';
+                        const description = item.description || item.content || 'متن کامل در خبرگزاری';
+                        const shortSummary = description.length > 100 ? description.substring(0, 100) + '...' : description;
+
+                        const translatedTitle = await translateText(title, fromLang);
+                        const translatedSummary = await translateText(shortSummary, fromLang);
+
+                        html += `
                             <div class="news-item">
                                 <a href="${link}" target="_blank">
-                                    📰 ${item.title}
-                                    <div class="summary">${shortSummary}</div>
+                                    📰 ${translatedTitle}
+                                    <div class="summary">${translatedSummary}</div>
+                                    <div class="translated">🔗 لینک به خبر کامل</div>
                                 </a>
                             </div>
                         `;
-                    }).join('');
+                    }
+
+                    list.innerHTML = html;
                 } else {
                     list.innerHTML = '<div class="news-item">📭 خبری برای نمایش وجود ندارد.</div>';
                 }
@@ -103,7 +160,8 @@
                 document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
                 const url = this.getAttribute('data-url');
-                fetchNews(url);
+                const lang = this.getAttribute('data-lang') || 'en';
+                fetchNews(url, lang);
             });
         });
 
@@ -123,6 +181,8 @@
             let analysis = `📊 تعداد کلمات: ${words.length}\n`;
             if (text.includes('دولت') || text.includes('سیاست')) analysis += '🏛️ محتوای سیاسی\n';
             if (text.includes('دلار') || text.includes('قیمت')) analysis += '💰 محتوای اقتصادی\n';
+            if (text.includes('فناوری') || text.includes('رایانه')) analysis += '💻 محتوای فناوری\n';
+            if (text.includes('ورزش') || text.includes('فوتبال')) analysis += '⚽ محتوای ورزشی\n';
 
             resultDiv.style.display = 'block';
             resultDiv.textContent = analysis;
@@ -131,7 +191,7 @@
         // ============================
         //  بارگذاری اولیه (ایرنا)
         // ============================
-        fetchNews('https://www.irna.ir/rss');
+        fetchNews('https://www.irna.ir/rss', 'fa');
     </script>
 </body>
 </html>
