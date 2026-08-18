@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>امیرخوان</title>
     <style>
-        body { font-family: Tahoma; text-align: center; padding: 30px; direction: rtl; background: #f0f2f5; }
-        .box { background: white; max-width: 500px; margin: auto; padding: 30px; border-radius: 30px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
-        textarea { width: 100%; height: 80px; border-radius: 16px; border: 2px solid #ddd; padding: 12px; font-family: inherit; }
-        button { margin-top: 15px; padding: 14px 40px; background: #3b82f6; color: white; border: none; border-radius: 30px; font-size: 18px; cursor: pointer; width: 100%; }
-        .news-item { background: #f1f5f9; padding: 12px; margin: 8px 0; border-radius: 12px; border-right: 4px solid #3b82f6; text-align: right; }
-        #result { background: #f8fafc; padding: 15px; border-radius: 16px; margin-top: 15px; display: none; white-space: pre-wrap; text-align: right; }
+        body { font-family: Tahoma; background: #f0f2f5; padding: 20px; direction: rtl; }
+        .box { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 25px; }
+        textarea { width: 100%; height: 80px; border-radius: 12px; border: 2px solid #ddd; padding: 10px; }
+        button { width: 100%; padding: 14px; background: #3b82f6; color: white; border: none; border-radius: 30px; font-size: 18px; margin-top: 10px; }
+        .news-item { background: #f1f5f9; padding: 12px; margin: 8px 0; border-radius: 12px; border-right: 4px solid #3b82f6; }
         .tabs { display: flex; gap: 10px; margin: 15px 0; }
-        .tabs button { flex: 1; padding: 12px; border: none; border-radius: 30px; background: #e2e8f0; font-weight: bold; cursor: pointer; }
+        .tabs button { flex: 1; padding: 10px; background: #e2e8f0; border: none; border-radius: 20px; cursor: pointer; }
         .tabs .active { background: #1e293b; color: white; }
+        #result { background: #f8fafc; padding: 15px; border-radius: 12px; margin-top: 15px; display: none; }
     </style>
 </head>
 <body>
@@ -22,63 +22,66 @@
         <p>دستیار هوشمند رسانه</p>
 
         <h2>🔎 تحلیل خبر</h2>
-        <textarea id="newsText" placeholder="متن خود را اینجا بنویس..."></textarea>
+        <textarea id="newsText" placeholder="متن خبر را وارد کن..."></textarea>
         <button id="analyzeBtn">✨ تحلیل کن</button>
         <div id="result"></div>
 
         <h2>📡 رادار خبری</h2>
         <div class="tabs">
-            <button class="tab-btn active" data-category="iran">🇮🇷 ایران</button>
-            <button class="tab-btn" data-category="world">🌍 جهان</button>
+            <button class="active" id="iranBtn">🇮🇷 ایران</button>
+            <button id="worldBtn">🌍 جهان</button>
         </div>
         <div id="newsList"></div>
     </div>
 
     <script>
-        // ==========================================
+        // ============================
         //  داده‌های اخبار (نمونه)
-        // ==========================================
-        const newsDB = {
+        // ============================
+        const newsData = {
             iran: [
-                '🔥 قیمت دلار امروز در بازار آزاد به ۶۰ هزار تومان رسید',
+                '🔥 قیمت دلار امروز در بازار آزاد به ۶۰,۵۰۰ تومان رسید',
                 '📈 اعلام نتایج نهایی کنکور سراسری ۱۴۰۵',
-                '⚠️ هشدار سطح نارنجی هواشناسی برای تهران',
-                '🏛️ نشست خبری سخنگوی دولت درباره بودجه',
-                '📊 نرخ بیکاری در کشور به ۸.۵ درصد کاهش یافت'
+                '⚠️ هشدار سطح نارنجی هواشناسی برای تهران و البرز',
+                '🏛️ جلسه غیرعلنی مجلس با حضور وزیر اقتصاد',
+                '📊 کاهش ۰.۵ درصدی نرخ بیکاری در فصل بهار'
             ],
             world: [
-                '🌍 تنش‌های جدید در مرزهای اوکراین و روسیه',
-                '📈 قیمت نفت به بالاترین سطح در ۳ ماه اخیر رسید',
-                '⚠️ هشدار سازمان بهداشت جهانی درباره آبله میمون',
-                '🏛️ انتخابات ریاست‌جمهوری در فرانسه وارد مرحله دوم شد',
-                '📊 گزارش جدید از رشد اقتصادی چین در سه ماهه اول'
+                '🌍 تشدید تنش‌ها در مرزهای اوکراین و روسیه',
+                '📈 سقوط آزاد قیمت نفت در بازارهای جهانی',
+                '⚠️ هشدار قرمز سازمان بهداشت درباره موج جدید کرونا',
+                '🏛️ پیروزی حزب چپ در انتخابات فرانسه',
+                '📊 افزایش ۲.۱ درصدی تولید ناخالص داخلی چین'
             ]
         };
 
-        // ==========================================
+        // ============================
         //  نمایش اخبار
-        // ==========================================
-        function displayNews(category) {
+        // ============================
+        function showNews(category) {
             const list = document.getElementById('newsList');
-            const items = newsDB[category] || ['📭 خبری برای نمایش وجود ندارد.'];
+            const items = newsData[category] || ['📭 خبری برای نمایش وجود ندارد.'];
             list.innerHTML = items.map(item => `<div class="news-item">${item}</div>`).join('');
         }
 
-        // ==========================================
+        // ============================
         //  دکمه‌های ایران و جهان
-        // ==========================================
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                const category = this.getAttribute('data-category');
-                displayNews(category);
-            });
+        // ============================
+        document.getElementById('iranBtn').addEventListener('click', function() {
+            document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            showNews('iran');
         });
 
-        // ==========================================
-        //  تحلیل خبر
-        // ==========================================
+        document.getElementById('worldBtn').addEventListener('click', function() {
+            document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            showNews('world');
+        });
+
+        // ============================
+        //  دکمه‌ی تحلیل
+        // ============================
         document.getElementById('analyzeBtn').addEventListener('click', function() {
             const text = document.getElementById('newsText').value.trim();
             const resultDiv = document.getElementById('result');
@@ -90,27 +93,17 @@
 
             const words = text.split(' ');
             let analysis = `📊 تعداد کلمات: ${words.length}\n`;
-
-            if (text.includes('دولت') || text.includes('سیاست') || text.includes('رئیس‌جمهور')) {
-                analysis += '🏛️ این خبر دارای محتوای سیاسی است.\n';
-            }
-            if (text.includes('دلار') || text.includes('قیمت') || text.includes('بازار')) {
-                analysis += '💰 این خبر دارای محتوای اقتصادی است.\n';
-            }
-            if (words.length > 20) {
-                analysis += '📝 این خبر نسبتاً مفصل است.\n';
-            } else {
-                analysis += '📝 این خبر کوتاه است.\n';
-            }
+            if (text.includes('دولت') || text.includes('سیاست')) analysis += '🏛️ محتوای سیاسی\n';
+            if (text.includes('دلار') || text.includes('قیمت')) analysis += '💰 محتوای اقتصادی\n';
 
             resultDiv.style.display = 'block';
             resultDiv.textContent = analysis;
         });
 
-        // ==========================================
+        // ============================
         //  بارگذاری اولیه (ایران)
-        // ==========================================
-        displayNews('iran');
+        // ============================
+        showNews('iran');
     </script>
 </body>
 </html>
