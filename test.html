@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تست امیرخوان</title>
+    <style>
+        body { font-family: Tahoma; text-align: center; padding: 50px; direction: rtl; }
+        button { padding: 15px 30px; margin: 10px; font-size: 18px; border-radius: 30px; border: none; background: #3b82f6; color: white; cursor: pointer; }
+        #news { margin-top: 30px; text-align: right; max-width: 600px; margin-left: auto; margin-right: auto; }
+        #news li { background: #f1f5f9; padding: 12px; margin: 8px 0; border-radius: 12px; list-style: none; border-right: 4px solid #3b82f6; }
+    </style>
+</head>
+<body>
+    <h1>🧠 تست امیرخوان</h1>
+    <div>
+        <button id="iran-btn">🇮🇷 اخبار ایران</button>
+        <button id="world-btn">🌍 اخبار جهان</button>
+    </div>
+    <ul id="news"></ul>
+
+    <script>
+        const newsData = {
+            iran: [
+                '🔥 قیمت دلار امروز در بازار آزاد',
+                '📈 اعلام نتایج نهایی کنکور ۱۴۰۵',
+                '⚠️ هشدار سطح نارنجی هواشناسی برای تهران',
+                '🏛️ نشست خبری سخنگوی دولت',
+                '📊 نرخ بیکاری در کشور کاهش یافت'
+            ],
+            world: [
+                '🌍 نشست اضطراری شورای امنیت درباره غزه',
+                '📈 افزایش قیمت نفت در بازارهای جهانی',
+                '⚠️ هشدار سازمان بهداشت درباره آبله میمون',
+                '🏛️ انتخابات ریاست‌جمهوری در فرانسه',
+                '📊 گزارش جدید از وضعیت اقتصاد چین'
+            ]
+        };
+
+        function showNews(category) {
+            const ul = document.getElementById('news');
+            const items = newsData[category];
+            ul.innerHTML = items.map(item => `<li>${item}</li>`).join('');
+        }
+
+        document.getElementById('iran-btn').addEventListener('click', () => showNews('iran'));
+        document.getElementById('world-btn').addEventListener('click', () => showNews('world'));
+
+        // نمایش خودکار اخبار ایران هنگام بارگذاری
+        showNews('iran');
+    </script>
+</body>
+</html>
+add test.html
