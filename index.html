@@ -3,81 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>امیرخوان - تحلیلگر خبر</title>
+    <title>امیرخوان - ایرنا</title>
     <style>
         body { font-family: Tahoma; background: #f0f2f5; padding: 20px; direction: rtl; }
         .box { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 25px; }
-        textarea { width: 100%; height: 80px; border-radius: 12px; border: 2px solid #ddd; padding: 10px; font-family: inherit; }
-        button { width: 100%; padding: 14px; background: #3b82f6; color: white; border: none; border-radius: 30px; font-size: 18px; margin-top: 10px; cursor: pointer; }
         .news-item { background: #f1f5f9; padding: 12px; margin: 8px 0; border-radius: 12px; border-right: 4px solid #3b82f6; }
+        button { width: 100%; padding: 14px; background: #3b82f6; color: white; border: none; border-radius: 30px; font-size: 18px; margin-top: 10px; cursor: pointer; }
         #result { background: #f8fafc; padding: 15px; border-radius: 12px; margin-top: 15px; display: none; white-space: pre-wrap; }
-        .tabs { display: flex; gap: 10px; margin: 15px 0; }
-        .tabs button { flex: 1; padding: 10px; background: #e2e8f0; border: none; border-radius: 20px; cursor: pointer; }
-        .tabs .active { background: #1e293b; color: white; }
     </style>
 </head>
 <body>
     <div class="box">
         <h1>🧠 امیرخوان</h1>
-        <p>دستیار هوشمند رسانه</p>
+        <p>دستیار هوشمند رسانه - اخبار ایرنا</p>
+
+        <h2>📡 آخرین اخبار ایرنا</h2>
+        <div id="newsList">⏳ در حال بارگذاری...</div>
 
         <h2>🔎 تحلیل خبر</h2>
         <textarea id="newsText" placeholder="متن خبر را وارد کن..."></textarea>
         <button id="analyzeBtn">✨ تحلیل کن</button>
         <div id="result"></div>
-
-        <h2>📡 رادار خبری</h2>
-        <div class="tabs">
-            <button class="active" id="iranBtn">🇮🇷 ایران</button>
-            <button id="worldBtn">🌍 جهان</button>
-        </div>
-        <div id="newsList"></div>
     </div>
 
     <script>
         // ============================
-        //  داده‌های اخبار
+        //  دریافت اخبار ایرنا از RSS
         // ============================
-        const newsData = {
-            iran: [
-                '🔥 قیمت دلار امروز در بازار آزاد به ۶۰,۵۰۰ تومان رسید',
-                '📈 اعلام نتایج نهایی کنکور سراسری ۱۴۰۵',
-                '⚠️ هشدار سطح نارنجی هواشناسی برای تهران و البرز',
-                '🏛️ جلسه غیرعلنی مجلس با حضور وزیر اقتصاد',
-                '📊 کاهش ۰.۵ درصدی نرخ بیکاری در فصل بهار'
-            ],
-            world: [
-                '🌍 تشدید تنش‌ها در مرزهای اوکراین و روسیه',
-                '📈 سقوط آزاد قیمت نفت در بازارهای جهانی',
-                '⚠️ هشدار قرمز سازمان بهداشت درباره موج جدید کرونا',
-                '🏛️ پیروزی حزب چپ در انتخابات فرانسه',
-                '📊 افزایش ۲.۱ درصدی تولید ناخالص داخلی چین'
-            ]
-        };
-
-        // ============================
-        //  نمایش اخبار
-        // ============================
-        function showNews(category) {
+        async function fetchIrnaNews() {
             const list = document.getElementById('newsList');
-            const items = newsData[category] || ['📭 خبری برای نمایش وجود ندارد.'];
-            list.innerHTML = items.map(item => `<div class="news-item">${item}</div>`).join('');
+            try {
+                // استفاده از RSS ایرنا و تبدیل به JSON
+                const rssUrl = 'https://www.irna.ir/rss';
+                const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+                
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                if (data.items && data.items.length > 0) {
+                    list.innerHTML = data.items.slice(0, 10).map(item => 
+                        `<div class="news-item">📰 ${item.title}</div>`
+                    ).join('');
+                } else {
+                    list.innerHTML = '<div class="news-item">📭 خبری برای نمایش وجود ندارد.</div>';
+                }
+            } catch (error) {
+                list.innerHTML = '<div class="news-item">⚠️ خطا در دریافت اخبار. شاید اینترنت شما محدود است.</div>';
+                console.log('خطا:', error);
+            }
         }
-
-        // ============================
-        //  دکمه‌های ایران و جهان
-        // ============================
-        document.getElementById('iranBtn').addEventListener('click', function() {
-            document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            showNews('iran');
-        });
-
-        document.getElementById('worldBtn').addEventListener('click', function() {
-            document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            showNews('world');
-        });
 
         // ============================
         //  دکمه‌ی تحلیل
@@ -93,26 +67,17 @@
 
             const words = text.split(' ');
             let analysis = `📊 تعداد کلمات: ${words.length}\n`;
-            if (text.includes('دولت') || text.includes('سیاست') || text.includes('رئیس‌جمهور')) {
-                analysis += '🏛️ این خبر دارای محتوای سیاسی است.\n';
-            }
-            if (text.includes('دلار') || text.includes('قیمت') || text.includes('بازار')) {
-                analysis += '💰 این خبر دارای محتوای اقتصادی است.\n';
-            }
-            if (words.length > 20) {
-                analysis += '📝 این خبر نسبتاً مفصل است.\n';
-            } else {
-                analysis += '📝 این خبر کوتاه است.\n';
-            }
+            if (text.includes('دولت') || text.includes('سیاست')) analysis += '🏛️ محتوای سیاسی\n';
+            if (text.includes('دلار') || text.includes('قیمت')) analysis += '💰 محتوای اقتصادی\n';
 
             resultDiv.style.display = 'block';
             resultDiv.textContent = analysis;
         });
 
         // ============================
-        //  بارگذاری اولیه (ایران)
+        //  بارگذاری اولیه
         // ============================
-        showNews('iran');
+        fetchIrnaNews();
     </script>
 </body>
 </html>
