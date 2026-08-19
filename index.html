@@ -1,960 +1,467 @@
-<!DOCTYPE html>
-<html lang="fa">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <meta name="description" content="امیرخوان؛ پلتفرم خبری هوشمند برای مشاهده، خلاصه‌سازی، ترجمه و تحلیل اخبار ایران و جهان.">
-    <meta name="robots" content="index, follow">
-
-    <title>امیرخوان | اخبار ایران و جهان</title>
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Tahoma, Arial, sans-serif;
-            background: #f0f4f8;
-            padding: 16px;
-            direction: rtl;
-            color: #1e293b;
-        }
-
-        .container {
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
-        .header {
-            background: #ffffff;
-            padding: 16px 20px;
-            border-radius: 16px;
-            margin-bottom: 20px;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            border-bottom: 3px solid #2563eb;
-        }
-
-        .header h1 {
-            font-size: 26px;
-            color: #2563eb;
-        }
-
-        .header h1 span {
-            color: #1e40af;
-        }
-
-        .category {
-            background: #ffffff;
-            border-radius: 14px;
-            padding: 12px 16px;
-            margin-bottom: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-        }
-
-        .category-title {
-            font-size: 13px;
-            color: #64748b;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-
-        .tabs {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-
-        .tabs button {
-            padding: 7px 13px;
-            border: none;
-            border-radius: 30px;
-            background: #f1f5f9;
-            color: #334155;
-            font-size: 13px;
-            cursor: pointer;
-        }
-
-        .tabs button:hover {
-            background: #e2e8f0;
-        }
-
-        .tabs button.active {
-            background: #2563eb;
-            color: #ffffff;
-        }
-
-        .news-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .news-card {
-            background: #ffffff;
-            border-radius: 14px;
-            padding: 14px 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            border-right: 4px solid #2563eb;
-            cursor: pointer;
-        }
-
-        .news-card .title {
-            font-size: 15px;
-            font-weight: 600;
-            color: #0f172a;
-            margin-bottom: 6px;
-            line-height: 1.7;
-        }
-
-        .news-card .snippet {
-            font-size: 13px;
-            color: #475569;
-            line-height: 1.7;
-        }
-
-        .summary-box {
-            display: none;
-            margin-top: 12px;
-            padding: 12px;
-            background: #f8fafc;
-            border-radius: 10px;
-            border-right: 3px solid #2563eb;
-            font-size: 13px;
-            line-height: 1.9;
-        }
-
-        .summary-box.show {
-            display: block;
-        }
-
-        .summary-title {
-            font-weight: 600;
-            color: #2563eb;
-            margin-bottom: 7px;
-        }
-
-        .summary-en {
-            background: #f1f5f9;
-            padding: 8px 10px;
-            border-radius: 8px;
-            margin-top: 6px;
-            direction: ltr;
-            text-align: left;
-        }
-
-        .summary-fa {
-            background: #dbeafe;
-            padding: 8px 10px;
-            border-radius: 8px;
-            margin-top: 8px;
-            color: #1e40af;
-        }
-
-        .translate-btn {
-            width: 100%;
-            margin-top: 8px;
-            padding: 9px;
-            border: none;
-            border-radius: 8px;
-            background: #2563eb;
-            color: #ffffff;
-            cursor: pointer;
-            font-family: Tahoma;
-            font-size: 13px;
-        }
-
-        .translate-btn:disabled {
-            opacity: 0.6;
-            cursor: wait;
-        }
-
-        .read-more {
-            display: inline-block;
-            margin-top: 10px;
-            color: #2563eb;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .foreign-badge {
-            background: #dbeafe;
-            color: #2563eb;
-            font-size: 10px;
-            padding: 2px 9px;
-            border-radius: 40px;
-            margin-right: 6px;
-            border: 1px solid #bfdbfe;
-            white-space: nowrap;
-        }
-
-        .loading {
-            text-align: center;
-            color: #94a3b8;
-            padding: 30px 0;
-        }
-
-        .no-news {
-            text-align: center;
-            color: #94a3b8;
-            padding: 20px;
-            background: #f8fafc;
-            border-radius: 12px;
-            border: 1px dashed #e2e8f0;
-        }
-
-        .analysis-box {
-            background: #ffffff;
-            border-radius: 14px;
-            padding: 16px;
-            margin-top: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-        }
-
-        .analysis-box h3 {
-            color: #2563eb;
-            margin-bottom: 8px;
-        }
-
-        .analysis-box textarea {
-            width: 100%;
-            height: 90px;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 10px;
-            background: #f8fafc;
-            color: #0f172a;
-            font-family: Tahoma;
-            resize: vertical;
-        }
-
-        .analysis-box textarea:focus {
-            outline: none;
-            border-color: #2563eb;
-        }
-
-        .analysis-box button {
-            width: 100%;
-            padding: 12px;
-            margin-top: 10px;
-            border: none;
-            border-radius: 30px;
-            background: #2563eb;
-            color: #ffffff;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: Tahoma;
-        }
-
-        #result {
-            margin-top: 12px;
-            padding: 12px;
-            background: #f8fafc;
-            border-radius: 10px;
-            display: none;
-            font-size: 13px;
-            line-height: 1.9;
-            border: 1px solid #e2e8f0;
-        }
-
-        #result .label {
-            color: #2563eb;
-            font-weight: 600;
-        }
-
-        .sentiment-positive {
-            color: #16a34a;
-        }
-
-        .sentiment-negative {
-            color: #dc2626;
-        }
-
-        .sentiment-neutral {
-            color: #eab308;
-        }
-    </style>
-</head>
-
-<body>
-
-<div class="container">
-
-    <div class="header">
-        <h1>🧠 <span>امیر</span>خوان</h1>
-        <p style="font-size:12px;color:#64748b;margin-top:5px;">
-            اخبار ایران و جهان
-        </p>
-    </div>
-
-    <!-- داخلی -->
-    <div class="category">
-        <div class="category-title">🇮🇷 اخبار داخلی</div>
-
-        <div class="tabs" id="internalTabs">
-
-            <button
-                class="active"
-                data-url="https://www.irna.ir/rss"
-                data-lang="fa">
-                ایرنا
-            </button>
-
-            <button
-                data-url="https://www.mehrnews.com/rss"
-                data-lang="fa">
-                مهر
-            </button>
-
-            <button
-                data-url="https://www.imna.ir/rss"
-                data-lang="fa">
-                ایمنا
-            </button>
-
-            <button
-                data-url="https://www.donya-e-eqtesad.com/rss"
-                data-lang="fa">
-                دنیای اقتصاد
-            </button>
-
-        </div>
-    </div>
-
-    <!-- خارجی -->
-    <div class="category">
-
-        <div class="category-title">🌍 اخبار بین‌الملل</div>
-
-        <div class="tabs" id="externalTabs">
-
-            <button
-                data-url="https://www.rt.com/rss"
-                data-lang="en">
-                راشا تودی
-            </button>
-
-            <button
-                data-url="https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml"
-                data-lang="en">
-                نیویورک تایمز
-            </button>
-
-            <button
-                data-url="https://www.theguardian.com/world/rss"
-                data-lang="en">
-                گاردین
-            </button>
-
-            <button
-                data-url="https://feeds.washingtonpost.com/rss/world"
-                data-lang="en">
-                واشنگتن پست
-            </button>
-
-            <button
-                data-url="https://www.nbcnews.com/feed"
-                data-lang="en">
-                ان‌بی‌سی
-            </button>
-
-            <button
-                data-url="https://www.cnbc.com/id/100003114/device/rss/rss.html"
-                data-lang="en">
-                سی‌ان‌بی‌سی
-            </button>
-
-            <button
-                data-url="https://feeds.bloomberg.com/markets/news.rss"
-                data-lang="en">
-                بلومبرگ
-            </button>
-
-        </div>
-    </div>
-
-    <!-- اخبار -->
-    <div class="news-list" id="newsList">
-        <div class="loading">
-            ⏳ در حال دریافت اخبار...
-        </div>
-    </div>
-
-    <!-- تحلیل -->
-    <div class="analysis-box">
-
-        <h3>🔎 تحلیل خبر</h3>
-
-        <textarea
-            id="newsText"
-            placeholder="متن خبر را برای تحلیل وارد کن...">
-        </textarea>
-
-        <button id="analyzeBtn">
-            🧠 تحلیل کن
-        </button>
-
-        <div id="result"></div>
-
-    </div>
-
+<!DOCTYPE html>  <html>  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>امیرخوان - خلاصه و ترجمه</title>  
+    <style>  
+        * { margin:0; padding:0; box-sizing:border-box; }  
+        body {  
+            font-family: Tahoma, sans-serif;  
+            background: #f0f4f8;  
+            padding: 16px;  
+            direction: rtl;  
+            color: #1e293b;  
+        }  
+        .container {  
+            max-width: 700px;  
+            margin: 0 auto;  
+        }  
+        .header {  
+            background: #ffffff;  
+            padding: 16px 20px;  
+            border-radius: 16px;  
+            margin-bottom: 20px;  
+            text-align: center;  
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);  
+            border-bottom: 3px solid #2563eb;  
+        }  
+        .header h1 {  
+            font-size: 26px;  
+            color: #2563eb;  
+        }  
+        .header h1 span { color: #1e40af; }  
+        .category {  
+            background: #ffffff;  
+            border-radius: 14px;  
+            padding: 12px 16px;  
+            margin-bottom: 16px;  
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);  
+        }  
+        .category-title {  
+            font-size: 13px;  
+            color: #64748b;  
+            margin-bottom: 8px;  
+            font-weight: 600;  
+        }  
+        .tabs {  
+            display: flex;  
+            flex-wrap: wrap;  
+            gap: 6px;  
+        }  
+        .tabs button {  
+            padding: 6px 14px;  
+            border: none;  
+            border-radius: 30px;  
+            background: #f1f5f9;  
+            color: #334155;  
+            font-size: 13px;  
+            cursor: pointer;  
+            transition: 0.2s;  
+        }  
+        .tabs button:hover { background: #e2e8f0; }  
+        .tabs button.active {  
+            background: #2563eb;  
+            color: #fff;  
+        }  
+        .news-list {  
+            display: flex;  
+            flex-direction: column;  
+            gap: 10px;  
+        }  
+        .news-card {  
+            background: #ffffff;  
+            border-radius: 14px;  
+            padding: 14px 16px;  
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);  
+            border-right: 4px solid #2563eb;  
+            transition: 0.2s;  
+            cursor: pointer;  
+        }  
+        .news-card:hover {  
+            box-shadow: 0 4px 16px rgba(37,99,235,0.08);  
+        }  
+        .news-card .title {  
+            font-size: 15px;  
+            font-weight: 600;  
+            color: #0f172a;  
+            margin-bottom: 4px;  
+        }  
+        .news-card .snippet {  
+            font-size: 13px;  
+            color: #475569;  
+            line-height: 1.6;  
+            margin-top: 4px;  
+        }  
+        .news-card .summary-box {  
+            display: none;  
+            margin-top: 12px;  
+            padding: 12px;  
+            background: #f8fafc;  
+            border-radius: 10px;  
+            border-right: 3px solid #2563eb;  
+            font-size: 13px;  
+            line-height: 1.8;  
+            color: #1e293b;  
+        }  
+        .news-card .summary-box.show {  
+            display: block;  
+            animation: fadeIn 0.3s ease;  
+        }  
+        @keyframes fadeIn {  
+            0% { opacity: 0; transform: translateY(6px); }  
+            100% { opacity: 1; transform: translateY(0); }  
+        }  
+        .news-card .summary-box .summary-title {  
+            font-weight: 600;  
+            color: #2563eb;  
+            margin-bottom: 4px;  
+        }  
+        .news-card .summary-box .summary-en {  
+            background: #f1f5f9;  
+            padding: 6px 10px;  
+            border-radius: 8px;  
+            margin-top: 4px;  
+            color: #334155;  
+        }  
+        .news-card .summary-box .summary-fa {  
+            background: #dbeafe;  
+            padding: 6px 10px;  
+            border-radius: 8px;  
+            margin-top: 4px;  
+            color: #1e40af;  
+        }  
+        .news-card .summary-box .read-more {  
+            display: inline-block;  
+            margin-top: 8px;  
+            color: #2563eb;  
+            text-decoration: none;  
+            font-weight: 500;  
+            font-size: 13px;  
+        }  
+        .news-card .summary-box .read-more:hover {  
+            text-decoration: underline;  
+        }  
+        .loading {  
+            text-align: center;  
+            color: #94a3b8;  
+            padding: 30px 0;  
+        }  
+        .analysis-box {  
+            background: #ffffff;  
+            border-radius: 14px;  
+            padding: 16px;  
+            margin-top: 20px;  
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);  
+        }  
+        .analysis-box h3 { color: #2563eb; margin-bottom: 8px; }  
+        .analysis-box textarea {  
+            width: 100%;  
+            height: 70px;  
+            border: 1px solid #e2e8f0;  
+            border-radius: 10px;  
+            padding: 10px;  
+            background: #f8fafc;  
+            color: #0f172a;  
+            font-family: Tahoma, sans-serif;  
+            resize: vertical;  
+        }  
+        .analysis-box textarea:focus {  
+            outline: none;  
+            border-color: #2563eb;  
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);  
+        }  
+        .analysis-box button {  
+            width: 100%;  
+            padding: 12px;  
+            margin-top: 10px;  
+            border: none;  
+            border-radius: 30px;  
+            background: #2563eb;  
+            color: #fff;  
+            font-size: 16px;  
+            font-weight: 600;  
+            cursor: pointer;  
+            transition: 0.2s;  
+        }  
+        .analysis-box button:hover { background: #1d4ed8; }  
+        #result {  
+            margin-top: 12px;  
+            padding: 12px;  
+            background: #f8fafc;  
+            border-radius: 10px;  
+            display: none;  
+            font-size: 13px;  
+            line-height: 1.8;  
+            color: #1e293b;  
+            border: 1px solid #e2e8f0;  
+        }  
+        #result .label { color: #2563eb; font-weight: 600; }  
+        .sentiment-positive { color: #16a34a; }  
+        .sentiment-negative { color: #dc2626; }  
+        .sentiment-neutral { color: #eab308; }  
+        .foreign-badge {  
+            background: #dbeafe;  
+            color: #2563eb;  
+            font-size: 10px;  
+            padding: 2px 10px;  
+            border-radius: 40px;  
+            margin-right: 8px;  
+            border: 1px solid #bfdbfe;  
+        }  
+        .no-news {  
+            text-align: center;  
+            color: #94a3b8;  
+            padding: 20px;  
+            background: #f8fafc;  
+            border-radius: 12px;  
+            border: 1px dashed #e2e8f0;  
+        }  
+    </style>  
+</head>  
+<body>  <div class="container">  
+    <div class="header">  
+        <h1>🧠 <span>امیر</span>خوان</h1>  
+    </div>  <div class="category">  
+    <div class="category-title">🇮🇷 داخلی</div>  
+    <div class="tabs" id="internalTabs">  
+        <button class="active" data-url="https://www.irna.ir/rss" data-lang="fa">ایرنا</button>  
+        <button data-url="https://www.mehrnews.com/rss" data-lang="fa">مهر</button>  
+        <button data-url="https://www.imna.ir/rss" data-lang="fa">ایمنا</button>  
+        <button data-url="https://www.donya-e-eqtesad.com/rss" data-lang="fa">دنیای اقتصاد</button>  
+    </div>  
+</div>  
+
+<div class="category">  
+    <div class="category-title">🌍 خارجی</div>  
+    <div class="tabs" id="externalTabs">  
+        <button data-url="https://www.rt.com/rss" data-lang="en">راشا تودی</button>  
+        <button data-url="https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml" data-lang="en">نیویورک تایمز</button>  
+        <button data-url="https://www.theguardian.com/world/rss" data-lang="en">گاردین</button>  
+        <button data-url="https://feeds.washingtonpost.com/rss/world" data-lang="en">واشنگتن پست</button>  
+        <button data-url="https://www.nbcnews.com/feed" data-lang="en">ان‌بی‌سی</button>  
+        <button data-url="https://www.cnbc.com/id/100003114/device/rss/rss.html" data-lang="en">سی‌ان‌بی‌سی</button>  
+        <button data-url="https://feeds.bloomberg.com/markets/news.rss" data-lang="en">بلومبرگ</button>  
+    </div>  
+</div>  
+
+<div class="news-list" id="newsList">  
+    <div class="loading">⏳ انتخاب کنید...</div>  
+</div>  
+
+<div class="analysis-box">  
+    <h3>🔎 تحلیل خبر</h3>  
+    <textarea id="newsText" placeholder="متن خبر را برای تحلیل وارد کن..."></textarea>  
+    <button id="analyzeBtn">🧠 تحلیل کن</button>  
+    <div id="result"></div>  
 </div>
 
-
-<script>
-
-/* =====================================
-   جلوگیری از نمایش کد HTML داخل خبر
-===================================== */
-
-function escapeHTML(text) {
-
-    if (!text) return '';
-
-    return text
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-}
-
-
-/* =====================================
-   ترجمه فقط هنگام درخواست کاربر
-===================================== */
-
-async function translateText(text) {
-
-    if (!text || text.length < 2) {
-        return text;
-    }
-
-    try {
-
-        const url =
-            'https://translate.googleapis.com/translate_a/single' +
-            '?client=gtx' +
-            '&sl=auto' +
-            '&tl=fa' +
-            '&dt=t' +
-            '&q=' +
-            encodeURIComponent(text);
-
-        const response = await fetch(url);
-
-        const data = await response.json();
-
-        if (data && data[0]) {
-
-            return data[0]
-                .map(item => item[0])
-                .join('');
-
-        }
-
-        return text;
-
-    } catch (error) {
-
-        return '⚠️ ترجمه در حال حاضر در دسترس نیست.';
-
-    }
-}
-
-
-/* =====================================
-   تحلیل خبر
-===================================== */
-
-function analyzeNews(text) {
-
-    const words = text
-        .trim()
-        .split(/\s+/)
-        .filter(Boolean);
-
-    const wordCount = words.length;
-
-    const sentences =
-        text.match(/[^.!?؟]+[.!?؟]+/g) || [text];
-
-    const sentenceCount = sentences.length;
-
-
-    const positiveWords = [
-        'خوب',
-        'عالی',
-        'بهبود',
-        'افزایش',
-        'پیروزی',
-        'موفق',
-        'امید',
-        'رشد',
-        'افتخار',
-        'قوی'
-    ];
-
-
-    const negativeWords = [
-        'بد',
-        'وحشت',
-        'کاهش',
-        'شکست',
-        'خطر',
-        'بحران',
-        'مرگ',
-        'آسیب',
-        'تحریم',
-        'جنگ',
-        'تورم'
-    ];
-
-
-    let positiveCount = 0;
-    let negativeCount = 0;
-
-
-    words.forEach(word => {
-
-        if (
-            positiveWords.some(
-                p => word.includes(p)
-            )
-        ) {
-            positiveCount++;
-        }
-
-        if (
-            negativeWords.some(
-                n => word.includes(n)
-            )
-        ) {
-            negativeCount++;
-        }
-
-    });
-
-
-    let sentiment = 'خنثی';
-    let sentimentEmoji = '😐';
-
-
-    if (
-        positiveCount >
-        negativeCount + 2
-    ) {
-
-        sentiment = 'مثبت';
-        sentimentEmoji = '😊';
-
-    } else if (
-        negativeCount >
-        positiveCount + 2
-    ) {
-
-        sentiment = 'منفی';
-        sentimentEmoji = '😞';
-
-    }
-
-
-    let topics = [];
-
-
-    if (
-        text.includes('دولت') ||
-        text.includes('سیاست') ||
-        text.includes('رئیس‌جمهور') ||
-        text.includes('مجلس')
-    ) {
-        topics.push('سیاسی');
-    }
-
-
-    if (
-        text.includes('دلار') ||
-        text.includes('قیمت') ||
-        text.includes('بازار') ||
-        text.includes('اقتصاد')
-    ) {
-        topics.push('اقتصادی');
-    }
-
-
-    if (
-        text.includes('فوتبال') ||
-        text.includes('ورزش')
-    ) {
-        topics.push('ورزشی');
-    }
-
-
-    if (
-        text.includes('فناوری') ||
-        text.includes('رایانه') ||
-        text.includes('هوش مصنوعی')
-    ) {
-        topics.push('فناوری');
-    }
-
-
-    if (
-        text.includes('سلامت') ||
-        text.includes('درمان') ||
-        text.includes('بیمارستان')
-    ) {
-        topics.push('سلامت');
-    }
-
-
-    if (topics.length === 0) {
-        topics.push('عمومی');
-    }
-
-
-    const wordFreq = {};
-
-
-    words.forEach(word => {
-
-        if (word.length > 3) {
-
-            wordFreq[word] =
-                (wordFreq[word] || 0) + 1;
-
-        }
-
-    });
-
-
-    const sortedWords =
-        Object.entries(wordFreq)
-            .sort((a, b) => b[1] - a[1]);
-
-
-    const keywords =
-        sortedWords
-            .slice(0, 5)
-            .map(item => item[0]);
-
-
-    const summary =
-        words.slice(0, 50).join(' ') +
-        (words.length > 50 ? '...' : '');
-
-
-    let credibilityScore = 5;
-
-
-    if (sentenceCount > 3) {
-        credibilityScore++;
-    }
-
-
-    if (wordCount > 50) {
-        credibilityScore++;
-    }
-
-
-    if (
-        text.includes('منبع') ||
-        text.includes('گزارش')
-    ) {
-        credibilityScore++;
-    }
-
-
-    if (
-        text.includes('ادعا') ||
-        text.includes('شایعه')
-    ) {
-        credibilityScore -= 2;
-    }
-
-
-    credibilityScore =
-        Math.min(
-            10,
-            Math.max(0, credibilityScore)
-        );
-
-
-    return {
-        wordCount,
-        sentenceCount,
-        sentiment,
-        sentimentEmoji,
-        topics,
-        keywords,
-        summary,
-        credibilityScore
-    };
-
-}
-
-
-/* =====================================
-   نمایش تحلیل
-===================================== */
-
-function displayAnalysis(result) {
-
-    const div =
-        document.getElementById('result');
-
-
-    const sentimentClass =
-        result.sentiment === 'مثبت'
-            ? 'sentiment-positive'
-            : result.sentiment === 'منفی'
-                ? 'sentiment-negative'
-                : 'sentiment-neutral';
-
-
-    div.innerHTML = `
-
-        <div>
-            <span class="label">📊 تعداد کلمات:</span>
-            ${result.wordCount}
-        </div>
-
-        <div>
-            <span class="label">📝 تعداد جملات:</span>
-            ${result.sentenceCount}
-        </div>
-
-        <div>
-            <span class="label">😊 احساسات:</span>
-            <span class="${sentimentClass}">
-                ${result.sentimentEmoji}
-                ${result.sentiment}
-            </span>
-        </div>
-
-        <div>
-            <span class="label">🏷️ موضوع:</span>
-            ${result.topics.join('، ')}
-        </div>
-
-        <div>
-            <span class="label">🔑 کلمات کلیدی:</span>
-            ${result.keywords.length
-                ? result.keywords.join('، ')
-                : 'مشخص نشد'}
-        </div>
-
-        <div>
-            <span class="label">📌 خلاصه:</span>
-            ${escapeHTML(result.summary)}
-        </div>
-
-        <div>
-            <span class="label">✅ امتیاز اعتبار:</span>
-            ${result.credibilityScore}/10
-        </div>
-
-    `;
-
-
-    div.style.display = 'block';
-
-}
-
-
-/* =====================================
-   دریافت اخبار
-===================================== */
-
-async function fetchNews(rssUrl, fromLang) {
-
-    const container =
-        document.getElementById('newsList');
-
-
-    container.innerHTML =
-        '<div class="loading">⏳ در حال بارگذاری اخبار...</div>';
-
-
-    try {
-
-        const apiUrl =
-            'https://api.rss2json.com/v1/api.json?rss_url=' +
-            encodeURIComponent(rssUrl);
-
-
-        const response =
-            await fetch(apiUrl);
-
-
-        if (!response.ok) {
-            throw new Error('Network error');
-        }
-
-
-        const data =
-            await response.json();
-
-
-        if (
-            !data.items ||
-            data.items.length === 0
-        ) {
-
-            container.innerHTML =
-                '<div class="no-news">📭 خبری برای نمایش وجود ندارد.</div>';
-
-            return;
-        }
-
-
-        const isForeign =
-            fromLang !== 'fa';
-
-
-        /*
-           فقط ۸ خبر می‌گیریم تا سرعت موبایل بهتر شود
-        */
-
-        const items =
-            data.items.slice(0, 8);
-
-
-        let html = '';
-
-
-        items.forEach(item => {
-
-            const link =
-                item.link || '#';
-
-
-            const title =
-                item.title || 'بدون عنوان';
-
-
-            let summary = '';
-
-
-            if (item.description) {
-
-                summary =
-                    item.description
-                        .replace(/<[^>]*>/g, '')
-                        .trim();
-
-            } else if (item.content) {
-
-                summary =
-                    item.content
-                        .replace(/<[^>]*>/g, '')
-                        .trim();
-
-            } else {
-
-                summary = title;
-
-            }
-
-
-            if (
-                !summary ||
-                summary.length < 5
-            ) {
-
-                summary = title;
-
-            }
-
-
-            const shortSummary =
-                summary.length > 140
-                    ? summary.substring(0, 140) + '...'
-                    : summary;
-
-
-            const safeTitle =
-                escapeHTML(title);
-
-
-            const safeSummary =
-                escapeHTML(summary);
-
-
-            const safeShortSummary =
-                escapeHTML(shortSummary);
-
-
-            html += `
-
-                <div
-                    class="news-card"
-                    data-link="${escapeHTML(link)}"
-                    data-summary="${safeSummary}"
-                    data-foreign="${isForeign}"
-                >
-
-                    <div class="title">
-
-                        📰 ${safeTitle}
-
-                        ${
-                            isForeign
-                            ? '<span class="foreign-badge">بین‌الملل</span>'
-                            : ''
-                        }
-
-                    </div>
-
-
-                    <div class="snippet">
-                        ${safeShortSummary}
-                    </div>
-
-
-                    <div class="summary-box">
-
-                        <div class="summary-title">
-                            📌 خلاصه خبر
-                        </div>
-
-
-                        ${
-                            isForeign
-                            ? `
-
-                                <div class="summary-en">
-                                    🌍 ${safeSummary}
-                                </div>
-
-                                <button
-                                    class="translate-btn"
-                                    type="button">
-                                    🇮🇷 ترجمه خبر
-                                </button>
-
-                                <div
-                                    class="summary-fa"
-                                    style="display:none;">
-                                </div>
-
-                            `
-                            : `
-
-                                <div>
-                                    ${safeSummary}
-                                </div>
-
-                            `
-                        }
-
-
-                        <a
-                            href="${escapeHTML(link)}"
-                            target="_blank"
- 
+</div>  <script>  
+// ================================  
+//  ترجمه با گوگل (برای خلاصه)  
+// ================================  
+async function translateText(text) {  
+    if (!text || text.length < 2) return text;  
+    try {  
+        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=fa&dt=t&q=${encodeURIComponent(text)}`;  
+        const response = await fetch(url);  
+        const data = await response.json();  
+        if (data && data[0]) {  
+            return data[0].map(item => item[0]).join('');  
+        }  
+        return text;  
+    } catch {  
+        return text;  
+    }  
+}  
+  
+// ================================  
+//  تحلیل خبر  
+// ================================  
+function analyzeNews(text) {  
+    const words = text.split(/\s+/);  
+    const wordCount = words.length;  
+    const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];  
+    const sentenceCount = sentences.length;  
+  
+    let positiveWords = ['خوب','عالی','بهبود','افزایش','پیروزی','موفق','امید','رشد','افتخار','قوی'];  
+    let negativeWords = ['بد','وحشت','کاهش','شکست','خطر','بحران','مرگ','آسیب','تحریم','جنگ','تورم'];  
+    let positiveCount=0, negativeCount=0;  
+    words.forEach(w => {  
+        if(positiveWords.some(p => w.includes(p))) positiveCount++;  
+        if(negativeWords.some(n => w.includes(n))) negativeCount++;  
+    });  
+    let sentiment='خنثی', sentimentEmoji='😐';  
+    if(positiveCount > negativeCount+2){ sentiment='مثبت'; sentimentEmoji='😊'; }  
+    else if(negativeCount > positiveCount+2){ sentiment='منفی'; sentimentEmoji='😞'; }  
+  
+    let topics=[];  
+    if(text.includes('دولت')||text.includes('سیاست')||text.includes('رئیس‌جمهور')) topics.push('سیاسی');  
+    if(text.includes('دلار')||text.includes('قیمت')||text.includes('بازار')||text.includes('اقتصاد')) topics.push('اقتصادی');  
+    if(text.includes('فوتبال')||text.includes('ورزش')) topics.push('ورزشی');  
+    if(text.includes('فناوری')||text.includes('رایانه')||text.includes('هوش مصنوعی')) topics.push('فناوری');  
+    if(text.includes('سلامت')||text.includes('درمان')||text.includes('بیمارستان')) topics.push('سلامت');  
+    if(topics.length===0) topics.push('عمومی');  
+  
+    const wordFreq={};  
+    words.forEach(w=>{ if(w.length>3) wordFreq[w]=(wordFreq[w]||0)+1; });  
+    const sortedWords=Object.entries(wordFreq).sort((a,b)=>b[1]-a[1]);  
+    const keywords=sortedWords.slice(0,5).map(item=>item[0]);  
+  
+    const summary=words.slice(0,50).join(' ')+(words.length>50?'...':'');  
+  
+    let credibilityScore=5;  
+    if(sentenceCount>3) credibilityScore+=1;  
+    if(wordCount>50) credibilityScore+=1;  
+    if(text.includes('منبع')||text.includes('گزارش')) credibilityScore+=1;  
+    if(text.includes('ادعا')||text.includes('شایعه')) credibilityScore-=2;  
+    credibilityScore=Math.min(10,Math.max(0,credibilityScore));  
+  
+    return { wordCount, sentenceCount, sentiment, sentimentEmoji, topics, keywords, summary, credibilityScore };  
+}  
+  
+function displayAnalysis(result) {  
+    const div = document.getElementById('result');  
+    const sentimentClass = result.sentiment==='مثبت'?'sentiment-positive':result.sentiment==='منفی'?'sentiment-negative':'sentiment-neutral';  
+    div.innerHTML = `  
+        <div><span class="label">📊 کلمات:</span> ${result.wordCount}</div>  
+        <div><span class="label">📝 جملات:</span> ${result.sentenceCount}</div>  
+        <div><span class="label">😊 احساسات:</span> <span class="${sentimentClass}">${result.sentimentEmoji} ${result.sentiment}</span></div>  
+        <div><span class="label">🏷️ موضوعات:</span> ${result.topics.join('، ')}</div>  
+        <div><span class="label">🔑 کلمات کلیدی:</span> ${result.keywords.join('، ')}</div>  
+        <div><span class="label">📌 خلاصه:</span> ${result.summary}</div>  
+        <div><span class="label">✅ اعتبار:</span> ${result.credibilityScore}/10</div>  
+    `;  
+    div.style.display='block';  
+}  
+  
+// ================================  
+//  دریافت اخبار  
+// ================================  
+async function fetchNews(rssUrl, fromLang) {  
+    const container = document.getElementById('newsList');  
+    container.innerHTML = '<div class="loading">⏳ در حال بارگذاری...</div>';  
+    try {  
+        const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;  
+        const response = await fetch(apiUrl);  
+        const data = await response.json();  
+  
+        if (!data.items || data.items.length === 0) {  
+            container.innerHTML = '<div class="no-news">📭 خبری برای نمایش وجود ندارد.</div>';  
+            return;  
+        }  
+  
+        const isForeign = fromLang !== 'fa';  
+        const items = data.items.slice(0, 10);  
+        let html = '';  
+  
+        for (const item of items) {  
+            const link = item.link || '#';  
+            const title = item.title || 'بدون عنوان';  
+              
+            // استخراج خلاصه (لید)  
+            let summary = '';  
+            if (item.description) {  
+                summary = item.description.replace(/<[^>]*>/g, '').trim();  
+            } else if (item.content) {  
+                summary = item.content.replace(/<[^>]*>/g, '').trim();  
+            } else if (item.title) {  
+                summary = item.title;  
+            }  
+              
+            if (!summary || summary.length < 5) {  
+                summary = title;  
+            }  
+              
+            // محدود کردن طول خلاصه  
+            const shortSummary = summary.length > 120 ? summary.substring(0, 120) + '...' : summary;  
+  
+            // برای خبرهای خارجی، خلاصه‌ی اصلی و ترجمه رو ذخیره می‌کنیم  
+            let summaryEn = '';  
+            let summaryFa = '';  
+            if (isForeign) {  
+                summaryEn = summary;  
+                // ترجمه‌ی خلاصه  
+                summaryFa = await translateText(summary);  
+            }  
+  
+            html += `  
+                <div class="news-card" data-link="${link}">  
+                    <div class="title">  
+                        📰 ${title}  
+                        ${isForeign ? '<span class="foreign-badge">انگلیسی</span>' : ''}  
+                    </div>  
+                    <div class="snippet">${shortSummary}</div>  
+                      
+                    <div class="summary-box">  
+                        <div class="summary-title">📌 خلاصه خبر</div>  
+                        ${isForeign ? `  
+                            <div class="summary-en">🇬🇧 ${summaryEn}</div>  
+                            <div class="summary-fa">🇮🇷 ${summaryFa}</div>  
+                        ` : `  
+                            <div>${summary}</div>  
+                        `}  
+                        <a href="${link}" target="_blank" class="read-more">🔗 مطالعه کامل خبر در منبع</a>  
+                    </div>  
+                </div>  
+            `;  
+        }  
+  
+        container.innerHTML = html;  
+  
+        // ================================  
+        //  رویداد کلیک روی هر کارت  
+        // ================================  
+        document.querySelectorAll('.news-card').forEach(card => {  
+            card.addEventListener('click', function(e) {  
+                // اگر روی لینک کلیک شده، کارت باز نشود  
+                if (e.target.tagName === 'A') return;  
+                  
+                const summaryBox = this.querySelector('.summary-box');  
+                const isOpen = summaryBox.classList.contains('show');  
+                  
+                // بستن سایر کارت‌ها  
+                document.querySelectorAll('.news-card .summary-box').forEach(el => el.classList.remove('show'));  
+                  
+                if (!isOpen) {  
+                    summaryBox.classList.add('show');  
+                    setTimeout(() => {  
+                        this.scrollIntoView({ behavior: 'smooth', block: 'center' });  
+                    }, 100);  
+                }  
+            });  
+        });  
+  
+    } catch (error) {  
+        container.innerHTML = '<div class="no-news">⚠️ خطا در دریافت اخبار</div>';  
+        console.error(error);  
+    }  
+}  
+  
+// ================================  
+//  دکمه‌ها  
+// ================================  
+function setupTabs(selector) {  
+    document.querySelectorAll(selector).forEach(btn => {  
+        btn.addEventListener('click', function() {  
+            const parent = this.closest('.tabs');  
+            parent.querySelectorAll('button').forEach(b => b.classList.remove('active'));  
+            this.classList.add('active');  
+            const url = this.dataset.url;  
+            const lang = this.dataset.lang || 'fa';  
+            fetchNews(url, lang);  
+        });  
+    });  
+}  
+setupTabs('#internalTabs button');  
+setupTabs('#externalTabs button');  
+  
+document.getElementById('analyzeBtn').addEventListener('click', function() {  
+    const text = document.getElementById('newsText').value.trim();  
+    if (!text) { alert('⚠️ لطفاً یک متن وارد کن.'); return; }  
+    displayAnalysis(analyzeNews(text));  
+});  
+  
+// بارگذاری اولیه  
+fetchNews('https://www.irna.ir/rss', 'fa');  
+</script>  </body>  
+</html> 
