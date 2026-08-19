@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>امیرخوان - اشتراک‌گذاری کامل</title>
+    <title>امیرخوان - نسخه نهایی</title>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
@@ -150,6 +150,14 @@
             flex-wrap: wrap;
             gap: 6px;
             margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #e2e8f0;
+        }
+        .share-buttons .share-label {
+            font-size: 11px;
+            color: #94a3b8;
+            margin-left: 8px;
+            align-self: center;
         }
         .share-buttons a {
             display: inline-block;
@@ -393,7 +401,7 @@ async function fetchNews(rssUrl, fromLang) {
                 } catch { timeAgo = ''; }
             }
 
-            // لینک‌های صحیح اشتراک‌گذاری
+            // لینک‌های اشتراک‌گذاری
             const shareText = encodeURIComponent(title);
             const shareUrl = encodeURIComponent(link);
             const telegramLink = `https://t.me/share/url?url=${shareUrl}&text=${shareText}`;
@@ -415,14 +423,15 @@ async function fetchNews(rssUrl, fromLang) {
                                 <a href="https://translate.google.com/translate?sl=en&tl=fa&u=${encodeURIComponent(link)}" target="_blank" class="translate-link">🌐 ترجمه با گوگل</a>
                             </div>
                         ` : ''}
-                        <div class="share-buttons">
-                            <a href="${telegramLink}" target="_blank" class="share-telegram">📨 تلگرام</a>
-                            <a href="${whatsappLink}" target="_blank" class="share-whatsapp">💬 واتساپ</a>
-                            <a href="${twitterLink}" target="_blank" class="share-twitter">🐦 توییتر</a>
-                            <a href="${itaLink}" target="_blank" class="share-ita">🟢 ایتا</a>
-                            <a href="${baleLink}" target="_blank" class="share-bale">🟡 بله</a>
-                        </div>
                         <a href="${link}" target="_blank" class="read-more">🔗 مطالعه کامل خبر در منبع</a>
+                        <div class="share-buttons">
+                            <span class="share-label">📤 اشتراک‌گذاری:</span>
+                            <a href="${telegramLink}" target="_blank" class="share-telegram">📨</a>
+                            <a href="${whatsappLink}" target="_blank" class="share-whatsapp">💬</a>
+                            <a href="${twitterLink}" target="_blank" class="share-twitter">🐦</a>
+                            <a href="${itaLink}" target="_blank" class="share-ita">🟢</a>
+                            <a href="${baleLink}" target="_blank" class="share-bale">🟡</a>
+                        </div>
                     </div>
                 </div>
             `;
