@@ -536,4 +536,72 @@ async function fetchNews(rssUrl, fromLang) {
                             <div style="margin-top:8px;">
                                 <a href="https://translate.google.com/translate?sl=en&tl=fa&u=${encodeURIComponent(link)}" target="_blank" class="translate-link">🌐 ترجمه کامل با گوگل</a>
                             </div>
-   
+                        ` : ''}
+                        <a href="${link}" target="_blank" class="read-more">🔗 مطالعه کامل خبر در منبع</a>
+                        <div class="share-buttons">
+                            <span class="share-label">📤 اشتراک‌گذاری:</span>
+                            <a href="${telegramLink}" target="_blank" class="share-telegram">📨</a>
+                            <a href="${whatsappLink}" target="_blank" class="share-whatsapp">💬</a>
+                            <a href="${twitterLink}" target="_blank" class="share-twitter">🐦</a>
+                            <a href="${itaLink}" target="_blank" class="share-ita">🟢</a>
+                            <a href="${baleLink}" target="_blank" class="share-bale">🟡</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        container.innerHTML = html;
+
+        document.querySelectorAll('.news-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') return;
+                const summaryBox = this.querySelector('.summary-box');
+                const isOpen = summaryBox.classList.contains('show');
+                document.querySelectorAll('.news-card .summary-box').forEach(el => el.classList.remove('show'));
+                if (!isOpen) {
+                    summaryBox.classList.add('show');
+                    setTimeout(() => {
+                        this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 100);
+                }
+            });
+        });
+
+    } catch (error) {
+        container.innerHTML = '<div class="no-news">⚠️ خطا در دریافت اخبار</div>';
+        stats.textContent = '📰 خطا';
+        console.error(error);
+    }
+}
+
+// ================================
+//  دکمه‌ها
+// ================================
+function setupTabs(selector) {
+    document.querySelectorAll(selector).forEach(btn => {
+        btn.addEventListener('click', function() {
+            const parent = this.closest('.tabs');
+            parent.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            const url = this.dataset.url;
+            const lang = this.dataset.lang || 'fa';
+            fetchNews(url, lang);
+        });
+    });
+}
+setupTabs('#internalTabs button');
+setupTabs('#externalScienceTabs button');
+
+document.getElementById('analyzeBtn').addEventListener('click', function() {
+    const text = document.getElementById('newsText').value.trim();
+    if (!text) { alert('⚠️ لطفاً یک متن وارد کن.'); return; }
+    displayAnalysis(analyzeNews(text));
+});
+
+// بارگذاری اولیه (ایرنا)
+fetchNews('https://www.irna.ir/rss', 'fa');
+</script>
+
+</body>
+</html>
