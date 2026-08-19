@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>امیرخوان - با ترجمه خودکار</title>
-    <!-- ===== کتابخانه ترجمه سبک ===== -->
-    <script src="https://cdn.jsdelivr.net/npm/translate.js@1.0.0/translate.min.js"></script>
+    <title>امیرخوان - با ترجمه فعال</title>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
@@ -377,15 +375,18 @@ document.getElementById('aiLink').addEventListener('click', function(e) {
 });
 
 // ================================
-//  ترجمه خودکار با translate.js
+//  ترجمه با Google Translate API (بدون کلید)
 // ================================
-async function translateText(text, fromLang) {
-    if (fromLang === 'fa' || !text || text.length < 2) return text;
+async function translateText(text) {
+    if (!text || text.length < 2) return text;
     try {
-        // ترجمه فقط خلاصه (حداکثر 200 کاراکتر)
-        const shortText = text.length > 200 ? text.substring(0, 200) + '...' : text;
-        const result = await translate(shortText, fromLang, 'fa');
-        return result;
+        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=fa&dt=t&q=${encodeURIComponent(text)}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        if (data && data[0]) {
+            return data[0].map(item => item[0]).join('');
+        }
+        return text;
     } catch (error) {
         console.warn('خطا در ترجمه:', error);
         return text;
@@ -510,7 +511,7 @@ async function fetchNews(rssUrl, fromLang) {
             // ترجمه خودکار خلاصه برای خبرهای خارجی
             let translatedSummary = '';
             if (isForeign) {
-                translatedSummary = await translateText(shortSummary, 'en');
+                translatedSummary = await translateText(shortSummary);
             }
 
             const shareText = encodeURIComponent(title);
@@ -526,7 +527,7 @@ async function fetchNews(rssUrl, fromLang) {
                     <div class="title">📰 ${title}</div>
                     <div class="meta">🕒 ${timeAgo || 'تاریخ نامشخص'}</div>
                     <div class="snippet">${shortSummary}</div>
-                    ${isForeign && translatedSummary ? `
+                    ${isForeign && translatedSummary && translatedSummary !== shortSummary ? `
                         <div class="translated-snippet show">🌐 ${translatedSummary}</div>
                     ` : ''}
                     <div class="summary-box">
@@ -536,72 +537,4 @@ async function fetchNews(rssUrl, fromLang) {
                             <div style="margin-top:8px;">
                                 <a href="https://translate.google.com/translate?sl=en&tl=fa&u=${encodeURIComponent(link)}" target="_blank" class="translate-link">🌐 ترجمه کامل با گوگل</a>
                             </div>
-                        ` : ''}
-                        <a href="${link}" target="_blank" class="read-more">🔗 مطالعه کامل خبر در منبع</a>
-                        <div class="share-buttons">
-                            <span class="share-label">📤 اشتراک‌گذاری:</span>
-                            <a href="${telegramLink}" target="_blank" class="share-telegram">📨</a>
-                            <a href="${whatsappLink}" target="_blank" class="share-whatsapp">💬</a>
-                            <a href="${twitterLink}" target="_blank" class="share-twitter">🐦</a>
-                            <a href="${itaLink}" target="_blank" class="share-ita">🟢</a>
-                            <a href="${baleLink}" target="_blank" class="share-bale">🟡</a>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        container.innerHTML = html;
-
-        document.querySelectorAll('.news-card').forEach(card => {
-            card.addEventListener('click', function(e) {
-                if (e.target.tagName === 'A') return;
-                const summaryBox = this.querySelector('.summary-box');
-                const isOpen = summaryBox.classList.contains('show');
-                document.querySelectorAll('.news-card .summary-box').forEach(el => el.classList.remove('show'));
-                if (!isOpen) {
-                    summaryBox.classList.add('show');
-                    setTimeout(() => {
-                        this.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 100);
-                }
-            });
-        });
-
-    } catch (error) {
-        container.innerHTML = '<div class="no-news">⚠️ خطا در دریافت اخبار</div>';
-        stats.textContent = '📰 خطا';
-        console.error(error);
-    }
-}
-
-// ================================
-//  دکمه‌ها
-// ================================
-function setupTabs(selector) {
-    document.querySelectorAll(selector).forEach(btn => {
-        btn.addEventListener('click', function() {
-            const parent = this.closest('.tabs');
-            parent.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            const url = this.dataset.url;
-            const lang = this.dataset.lang || 'fa';
-            fetchNews(url, lang);
-        });
-    });
-}
-setupTabs('#internalTabs button');
-setupTabs('#externalScienceTabs button');
-
-document.getElementById('analyzeBtn').addEventListener('click', function() {
-    const text = document.getElementById('newsText').value.trim();
-    if (!text) { alert('⚠️ لطفاً یک متن وارد کن.'); return; }
-    displayAnalysis(analyzeNews(text));
-});
-
-// بارگذاری اولیه (ایرنا)
-fetchNews('https://www.irna.ir/rss', 'fa');
-</script>
-
-</body>
-</html>
+           
