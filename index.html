@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>امیرخوان - منحصربه‌فرد</title>
+    <title>امیرخوان - تحلیل هوشمند با Gemini</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
@@ -12,7 +13,6 @@
             padding: 16px;
             direction: rtl;
             color: #1e293b;
-            transition: background 0.3s, color 0.3s;
         }
         body.dark-mode {
             background: #0f172a;
@@ -21,7 +21,8 @@
         body.dark-mode .header,
         body.dark-mode .category,
         body.dark-mode .news-card,
-        body.dark-mode .analysis-box {
+        body.dark-mode .analysis-box,
+        body.dark-mode .chart-box {
             background: #1e293b;
             color: #e2e8f0;
         }
@@ -186,22 +187,6 @@
         .news-card .summary-box .translate-link:hover {
             background: #dcfce7;
         }
-        .news-card .summary-box .play-summary {
-            display: inline-block;
-            margin-top: 6px;
-            color: #7c3aed;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 13px;
-            background: #f5f3ff;
-            padding: 4px 12px;
-            border-radius: 30px;
-            border: 1px solid #ddd6fe;
-            cursor: pointer;
-        }
-        .news-card .summary-box .play-summary:hover {
-            background: #ede9fe;
-        }
         .share-buttons {
             display: flex;
             flex-wrap: wrap;
@@ -237,6 +222,22 @@
             color: #94a3b8;
             padding: 30px 0;
         }
+        .chart-box {
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            transition: 0.3s;
+        }
+        .chart-box h3 {
+            color: #2563eb;
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+        .chart-box canvas {
+            max-height: 200px;
+        }
         .analysis-box {
             background: #ffffff;
             border-radius: 14px;
@@ -246,6 +247,27 @@
             transition: 0.3s;
         }
         .analysis-box h3 { color: #2563eb; margin-bottom: 8px; }
+        .analysis-box .ai-options {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+        .analysis-box .ai-options button {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 30px;
+            background: #f1f5f9;
+            color: #334155;
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .analysis-box .ai-options button:hover { background: #e2e8f0; }
+        .analysis-box .ai-options button.active {
+            background: #2563eb;
+            color: #fff;
+        }
         .analysis-box textarea {
             width: 100%;
             height: 70px;
@@ -262,7 +284,7 @@
             border-color: #2563eb;
             box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
         }
-        .analysis-box button {
+        .analysis-box .btn {
             width: 100%;
             padding: 12px;
             margin-top: 10px;
@@ -275,7 +297,7 @@
             cursor: pointer;
             transition: 0.2s;
         }
-        .analysis-box button:hover { background: #1d4ed8; }
+        .analysis-box .btn:hover { background: #1d4ed8; }
         #result {
             margin-top: 12px;
             padding: 12px;
@@ -299,6 +321,21 @@
             border-radius: 12px;
             border: 1px dashed #e2e8f0;
         }
+        .gemini-analysis {
+            margin-top: 10px;
+            padding: 12px;
+            background: #f5f3ff;
+            border-radius: 10px;
+            border-right: 3px solid #7c3aed;
+            font-size: 13px;
+            line-height: 1.8;
+            color: #1e293b;
+            display: none;
+        }
+        .gemini-analysis.show { display: block; }
+        .gemini-analysis .loading-text {
+            color: #7c3aed;
+        }
     </style>
 </head>
 <body>
@@ -312,23 +349,29 @@
         </div>
     </div>
 
+    <!-- ===== نمودار پربازدیدها ===== -->
+    <div class="chart-box">
+        <h3>📊 پربازدیدترین اخبار امروز</h3>
+        <canvas id="trendChart"></canvas>
+    </div>
+
     <div class="category">
         <div class="category-title">🇮🇷 داخلی</div>
         <div class="tabs" id="internalTabs">
-            <button class="active" data-url="https://www.irna.ir/rss" data-lang="fa" data-color="#2563eb">ایرنا</button>
-            <button data-url="https://www.mehrnews.com/rss" data-lang="fa" data-color="#16a34a">مهر</button>
-            <button data-url="https://www.imna.ir/rss" data-lang="fa" data-color="#7c3aed">ایمنا</button>
-            <button data-url="https://www.donya-e-eqtesad.com/rss" data-lang="fa" data-color="#f59e0b">دنیای اقتصاد</button>
+            <button class="active" data-url="https://www.irna.ir/rss" data-lang="fa">ایرنا</button>
+            <button data-url="https://www.mehrnews.com/rss" data-lang="fa">مهر</button>
+            <button data-url="https://www.imna.ir/rss" data-lang="fa">ایمنا</button>
+            <button data-url="https://www.donya-e-eqtesad.com/rss" data-lang="fa">دنیای اقتصاد</button>
         </div>
     </div>
 
     <div class="category">
         <div class="category-title">🌍 خارجی و علمی</div>
         <div class="tabs" id="externalScienceTabs">
-            <button data-url="https://www.rt.com/rss" data-lang="en" data-color="#dc2626">راشا تودی</button>
-            <button data-url="https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml" data-lang="en" data-color="#1a0dab">نیویورک تایمز</button>
-            <button data-url="https://www.theguardian.com/world/rss" data-lang="en" data-color="#052962">گاردین</button>
-            <button data-url="https://www.sciencedaily.com/rss/all.xml" data-lang="en" data-color="#0284c7">ساینس‌دیلی</button>
+            <button data-url="https://www.rt.com/rss" data-lang="en">راشا تودی</button>
+            <button data-url="https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml" data-lang="en">نیویورک تایمز</button>
+            <button data-url="https://www.theguardian.com/world/rss" data-lang="en">گاردین</button>
+            <button data-url="https://www.sciencedaily.com/rss/all.xml" data-lang="en">ساینس‌دیلی</button>
         </div>
     </div>
 
@@ -336,15 +379,28 @@
         <div class="loading">⏳ انتخاب کنید...</div>
     </div>
 
+    <!-- ===== تحلیل هوشمند با Gemini ===== -->
     <div class="analysis-box">
-        <h3>🔎 تحلیل خبر</h3>
-        <textarea id="newsText" placeholder="متن خبر را برای تحلیل وارد کن..."></textarea>
-        <button id="analyzeBtn">🧠 تحلیل کن</button>
+        <h3>🧠 تحلیل هوشمند با Gemini</h3>
+        <div class="ai-options">
+            <button class="active" data-mode="analyze">📊 تحلیل کامل</button>
+            <button data-mode="summary">📝 خلاصه</button>
+            <button data-mode="sentiment">😊 احساسات</button>
+            <button data-mode="keywords">🔑 کلمات کلیدی</button>
+        </div>
+        <textarea id="newsText" placeholder="متن یا لینک خبر را برای تحلیل با Gemini وارد کنید..."></textarea>
+        <button class="btn" id="analyzeBtn">🧠 تحلیل با Gemini</button>
         <div id="result"></div>
+        <div id="geminiResult" class="gemini-analysis"></div>
     </div>
 </div>
 
 <script>
+// ================================
+//  کلید Gemini API
+// ================================
+const GEMINI_API_KEY = 'YOUR_GEMINI_API_KEY'; // ← کلید خود را اینجا قرار دهید
+
 // ================================
 //  حالت مطالعه
 // ================================
@@ -362,7 +418,7 @@ document.getElementById('readModeBtn').addEventListener('click', function() {
 });
 
 // ================================
-//  تم شب/روز هوشمند
+//  تم شب/روز
 // ================================
 const themeToggle = document.getElementById('themeToggle');
 let darkMode = localStorage.getItem('amirkhan-theme') === 'dark';
@@ -377,15 +433,122 @@ themeToggle.addEventListener('click', function() {
     this.textContent = isDark ? '☀️' : '🌙';
 });
 
-// بررسی خودکار ساعت
-const hour = new Date().getHours();
-if (hour < 6 || hour > 18) {
-    document.body.classList.add('dark-mode');
-    themeToggle.textContent = '☀️';
+// ================================
+//  نمودار پربازدیدها
+// ================================
+let trendChart = null;
+
+function updateChart(articles) {
+    const ctx = document.getElementById('trendChart').getContext('2d');
+    const labels = articles.map(a => a.title.substring(0, 20) + '...');
+    const data = articles.map(a => Math.floor(Math.random() * 100) + 10);
+
+    if (trendChart) {
+        trendChart.destroy();
+    }
+
+    trendChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'تعداد بازدید (شبیه‌سازی)',
+                data: data,
+                backgroundColor: ['#2563eb', '#16a34a', '#7c3aed', '#f59e0b', '#dc2626', '#0284c7'],
+                borderColor: '#fff',
+                borderWidth: 1,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
 }
 
 // ================================
-//  تحلیل خبر
+//  تحلیل با Gemini
+// ================================
+async function callGemini(prompt) {
+    try {
+        const res = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`,
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+            }
+        );
+        const data = await res.json();
+        if (data.candidates && data.candidates.length > 0) {
+            return data.candidates[0].content.parts[0].text;
+        }
+        return 'پاسخی دریافت نشد. لطفاً دوباره تلاش کنید.';
+    } catch (error) {
+        console.error('خطا:', error);
+        return '⚠️ خطا در ارتباط با Gemini.';
+    }
+}
+
+document.getElementById('analyzeBtn').addEventListener('click', async function() {
+    const text = document.getElementById('newsText').value.trim();
+    const resultDiv = document.getElementById('result');
+    const geminiDiv = document.getElementById('geminiResult');
+    
+    if (!text) {
+        alert('⚠️ لطفاً یک متن یا لینک خبر وارد کنید.');
+        return;
+    }
+
+    // تشخیص حالت تحلیل
+    const activeMode = document.querySelector('.ai-options .active');
+    const mode = activeMode ? activeMode.dataset.mode : 'analyze';
+
+    let prompt = '';
+    switch(mode) {
+        case 'analyze':
+            prompt = `تحلیل کامل این خبر را انجام بده. شامل احساسات، موضوع، کلمات کلیدی، خلاصه و امتیاز اعتبار (۰ تا ۱۰). متن: ${text}`;
+            break;
+        case 'summary':
+            prompt = `خلاصه‌ای دقیق و کامل از این خبر بنویس: ${text}`;
+            break;
+        case 'sentiment':
+            prompt = `احساسات کلی این خبر را تحلیل کن و بگو مثبت است، منفی یا خنثی. متن: ${text}`;
+            break;
+        case 'keywords':
+            prompt = `۵ کلمه کلیدی اصلی این خبر را استخراج کن: ${text}`;
+            break;
+        default:
+            prompt = `تحلیل کن: ${text}`;
+    }
+
+    // نمایش بارگذاری
+    geminiDiv.innerHTML = '<div class="loading-text">⏳ در حال تحلیل با Gemini...</div>';
+    geminiDiv.classList.add('show');
+    resultDiv.style.display = 'none';
+
+    const response = await callGemini(prompt);
+    geminiDiv.innerHTML = `<div>🧠 ${response}</div>`;
+});
+
+// ================================
+//  انتخاب حالت تحلیل
+// ================================
+document.querySelectorAll('.ai-options button').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.ai-options button').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+    });
+});
+
+// ================================
+//  تحلیل ساده (برای نمایش سریع)
 // ================================
 function analyzeNews(text) {
     const words = text.split(/\s+/);
@@ -426,115 +589,4 @@ function analyzeNews(text) {
     if(text.includes('ادعا')||text.includes('شایعه')) credibilityScore-=2;
     credibilityScore=Math.min(10,Math.max(0,credibilityScore));
 
-    return { wordCount, sentenceCount, sentiment, sentimentEmoji, topics, keywords, summary, credibilityScore };
-}
-
-function displayAnalysis(result) {
-    const div = document.getElementById('result');
-    const sentimentClass = result.sentiment==='مثبت'?'sentiment-positive':result.sentiment==='منفی'?'sentiment-negative':'sentiment-neutral';
-    div.innerHTML = `
-        <div><span class="label">📊 کلمات:</span> ${result.wordCount}</div>
-        <div><span class="label">📝 جملات:</span> ${result.sentenceCount}</div>
-        <div><span class="label">😊 احساسات:</span> <span class="${sentimentClass}">${result.sentimentEmoji} ${result.sentiment}</span></div>
-        <div><span class="label">🏷️ موضوعات:</span> ${result.topics.join('، ')}</div>
-        <div><span class="label">🔑 کلمات کلیدی:</span> ${result.keywords.join('، ')}</div>
-        <div><span class="label">📌 خلاصه:</span> ${result.summary}</div>
-        <div><span class="label">✅ اعتبار:</span> ${result.credibilityScore}/10</div>
-    `;
-    div.style.display='block';
-}
-
-// ================================
-//  پخش خلاصه خبر با صدا
-// ================================
-function playSummary(text) {
-    if ('speechSynthesis' in window) {
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'fa-IR';
-        utterance.rate = 0.9;
-        speechSynthesis.speak(utterance);
-    } else {
-        alert('⚠️ مرورگر شما از این قابلیت پشتیبانی نمی‌کند.');
-    }
-}
-
-// ================================
-//  دریافت اخبار
-// ================================
-async function fetchNews(rssUrl, fromLang) {
-    const container = document.getElementById('newsList');
-    container.innerHTML = '<div class="loading">⏳ در حال بارگذاری...</div>';
-    try {
-        const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
-        const response = await fetch(apiUrl);
-        const data = await response.json();
-
-        if (!data.items || data.items.length === 0) {
-            container.innerHTML = '<div class="no-news">📭 خبری برای نمایش وجود ندارد.</div>';
-            return;
-        }
-
-        const isForeign = fromLang !== 'fa';
-        const items = data.items.slice(0, 10);
-        let html = '';
-
-        for (const item of items) {
-            const link = item.link || '#';
-            const title = item.title || 'بدون عنوان';
-            
-            let summary = '';
-            if (item.description) {
-                summary = item.description.replace(/<[^>]*>/g, '').trim();
-            } else if (item.content) {
-                summary = item.content.replace(/<[^>]*>/g, '').trim();
-            } else if (item.title) {
-                summary = item.title;
-            }
-            if (!summary || summary.length < 5) summary = title;
-            
-            const shortSummary = summary.length > 120 ? summary.substring(0, 120) + '...' : summary;
-
-            let timeAgo = '';
-            if (item.pubDate) {
-                try {
-                    const date = new Date(item.pubDate);
-                    const now = new Date();
-                    const diffMs = now - date;
-                    const diffMins = Math.floor(diffMs / 60000);
-                    const diffHours = Math.floor(diffMins / 60);
-                    const diffDays = Math.floor(diffHours / 24);
-                    if (diffDays > 0) timeAgo = `${diffDays} روز پیش`;
-                    else if (diffHours > 0) timeAgo = `${diffHours} ساعت پیش`;
-                    else if (diffMins > 0) timeAgo = `${diffMins} دقیقه پیش`;
-                    else timeAgo = 'لحظاتی پیش';
-                } catch { timeAgo = ''; }
-            }
-
-            // محاسبه اهمیت خبر (بر اساس طول متن و زمان)
-            const importance = Math.min(100, Math.floor((summary.length / 10) + (Math.random() * 20)));
-
-            const shareText = encodeURIComponent(title);
-            const shareUrl = encodeURIComponent(link);
-            const telegramLink = `https://t.me/share/url?url=${shareUrl}&text=${shareText}`;
-            const whatsappLink = `https://api.whatsapp.com/send?text=${shareText}%20${shareUrl}`;
-            const twitterLink = `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`;
-            const itaLink = `https://ita.ir/#!/share?url=${shareUrl}&text=${shareText}`;
-            const baleLink = `https://bale.ai/#!/share?url=${shareUrl}&text=${shareText}`;
-
-            html += `
-                <div class="news-card" data-link="${link}">
-                    <div class="title">📰 ${title}</div>
-                    <div class="meta">
-                        <span>🕒 ${timeAgo || 'تاریخ نامشخص'}</span>
-                        <span>⭐ اهمیت: ${importance}%</span>
-                    </div>
-                    <div class="importance-bar"><div class="fill" style="width:${importance}%"></div></div>
-                    <div class="snippet">${shortSummary}</div>
-                    <div class="summary-box">
-                        <div class="summary-title">📌 خلاصه خبر</div>
-                        <div>${summary}</div>
-                        ${isForeign ? `
-                            <div style="margin-top:8px;">
-                                <a href="https://translate.google.com/translate?sl=en&tl=fa&u=${encodeURIComponent(link)}" target="_blank" class="translate-link">🌐 ترجمه با گوگل</a>
-                            </div>
-                   
+    return { wordCount, sentenceCount, sentiment, sentimentEmoji, 
