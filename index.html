@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>امیرخوان - با اشتراک‌گذاری کامل</title>
+    <title>امیرخوان - اشتراک‌گذاری کامل</title>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
@@ -393,14 +393,14 @@ async function fetchNews(rssUrl, fromLang) {
                 } catch { timeAgo = ''; }
             }
 
-            // لینک‌های اشتراک‌گذاری
+            // لینک‌های صحیح اشتراک‌گذاری
             const shareText = encodeURIComponent(title);
             const shareUrl = encodeURIComponent(link);
             const telegramLink = `https://t.me/share/url?url=${shareUrl}&text=${shareText}`;
             const whatsappLink = `https://api.whatsapp.com/send?text=${shareText}%20${shareUrl}`;
             const twitterLink = `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`;
-            const itaLink = `https://ita.ir/share?url=${shareUrl}&text=${shareText}`;
-            const baleLink = `https://bale.ai/share?url=${shareUrl}&text=${shareText}`;
+            const itaLink = `https://ita.ir/#!/share?url=${shareUrl}&text=${shareText}`;
+            const baleLink = `https://bale.ai/#!/share?url=${shareUrl}&text=${shareText}`;
 
             html += `
                 <div class="news-card" data-link="${link}">
