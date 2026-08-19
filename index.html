@@ -3,40 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>امیرخوان - با هشتگ خودکار</title>
+    <title>امیرخوان AI - با Gemini</title>
+    <meta name="description" content="پلتفرم هوش مصنوعی با Gemini">
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
-            font-family: Tahoma, sans-serif;
-            background: #f0f4f8;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
             padding: 16px;
             direction: rtl;
-            color: #1e293b;
+            color: #e2e8f0;
+            min-height: 100vh;
         }
         .container { max-width: 700px; margin: 0 auto; }
         .header {
-            background: #ffffff;
-            padding: 16px 20px;
-            border-radius: 16px;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(12px);
+            padding: 20px;
+            border-radius: 20px;
             margin-bottom: 20px;
             text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            border-bottom: 3px solid #2563eb;
+            border: 1px solid rgba(255,255,255,0.05);
         }
-        .header h1 { font-size: 26px; color: #2563eb; }
-        .header h1 span { color: #1e40af; }
-        .category {
-            background: #ffffff;
-            border-radius: 14px;
-            padding: 12px 16px;
+        .header h1 {
+            font-size: 28px;
+            background: linear-gradient(135deg, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .header p { color: #94a3b8; margin-top: 4px; }
+        .card {
+            background: rgba(255,255,255,0.04);
+            backdrop-filter: blur(8px);
+            border-radius: 16px;
+            padding: 16px;
             margin-bottom: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
         }
-        .category-title {
-            font-size: 13px;
-            color: #64748b;
-            margin-bottom: 8px;
+        .card-title {
+            font-size: 14px;
+            color: #94a3b8;
+            margin-bottom: 10px;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         .tabs {
             display: flex;
@@ -44,219 +55,207 @@
             gap: 6px;
         }
         .tabs button {
-            padding: 6px 12px;
-            border: none;
+            padding: 6px 14px;
+            border: 1px solid rgba(255,255,255,0.08);
             border-radius: 30px;
-            background: #f1f5f9;
-            color: #334155;
+            background: rgba(255,255,255,0.03);
+            color: #94a3b8;
             font-size: 12px;
             cursor: pointer;
             transition: 0.2s;
         }
-        .tabs button:hover { background: #e2e8f0; }
+        .tabs button:hover { background: rgba(255,255,255,0.08); }
         .tabs button.active {
-            background: #2563eb;
+            background: #6366f1;
             color: #fff;
+            border-color: #6366f1;
         }
-        .news-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+        .news-list { display: flex; flex-direction: column; gap: 10px; }
         .news-card {
-            background: #ffffff;
+            background: rgba(255,255,255,0.04);
             border-radius: 14px;
             padding: 14px 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            border-right: 4px solid #2563eb;
-            transition: 0.2s;
+            border-right: 3px solid #6366f1;
             cursor: pointer;
+            transition: 0.2s;
         }
-        .news-card:hover {
-            box-shadow: 0 4px 16px rgba(37,99,235,0.08);
-        }
-        .news-card .title {
-            font-size: 15px;
-            font-weight: 600;
-            color: #0f172a;
-            margin-bottom: 4px;
-        }
-        .news-card .meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            font-size: 12px;
-            color: #64748b;
-            margin: 6px 0 4px;
-        }
-        .news-card .snippet {
-            font-size: 13px;
-            color: #475569;
-            line-height: 1.6;
-            margin-top: 2px;
-        }
-        .news-card .hashtags {
-            margin-top: 6px;
-            font-size: 12px;
-            color: #7c3aed;
-            direction: ltr;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-        }
-        .news-card .hashtags span {
-            background: #f3f0ff;
-            padding: 2px 8px;
-            border-radius: 30px;
-            border: 1px solid #e9d5ff;
-        }
+        .news-card:hover { background: rgba(255,255,255,0.07); }
+        .news-card .title { font-size: 15px; font-weight: 600; }
+        .news-card .meta { font-size: 12px; color: #64748b; margin: 4px 0; }
+        .news-card .snippet { font-size: 13px; color: #94a3b8; }
         .news-card .summary-box {
             display: none;
-            margin-top: 12px;
+            margin-top: 10px;
             padding: 12px;
-            background: #f8fafc;
+            background: rgba(255,255,255,0.03);
             border-radius: 10px;
-            border-right: 3px solid #2563eb;
             font-size: 13px;
             line-height: 1.8;
-            color: #1e293b;
         }
-        .news-card .summary-box.show {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-        @keyframes fadeIn {
-            0% { opacity: 0; transform: translateY(6px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-        .news-card .summary-box .summary-title {
-            font-weight: 600;
-            color: #2563eb;
-            margin-bottom: 4px;
-        }
-        .news-card .summary-box .read-more {
-            display: inline-block;
-            margin-top: 8px;
-            color: #2563eb;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 13px;
-        }
-        .news-card .summary-box .read-more:hover {
-            text-decoration: underline;
-        }
-        .news-card .summary-box .translate-link {
-            display: inline-block;
-            margin-top: 6px;
-            color: #16a34a;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 13px;
-            background: #f0fdf4;
-            padding: 4px 12px;
+        .news-card .summary-box.show { display: block; }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
             border-radius: 30px;
-            border: 1px solid #bbf7d0;
+            background: #6366f1;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
         }
-        .news-card .summary-box .translate-link:hover {
-            background: #dcfce7;
+        .btn:hover { background: #4f46e5; transform: scale(1.01); }
+        .btn-secondary {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
         }
-        .share-buttons {
+        .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+        textarea, input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            background: rgba(255,255,255,0.03);
+            color: #e2e8f0;
+            font-family: inherit;
+            font-size: 13px;
+            resize: vertical;
+        }
+        textarea:focus, input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+        }
+        .ai-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+        }
+        .ai-grid .btn {
+            padding: 10px;
+            font-size: 12px;
+        }
+        .result-box {
+            margin-top: 12px;
+            padding: 12px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            display: none;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+        .result-box.show { display: block; }
+        .loading { text-align: center; color: #64748b; padding: 20px 0; }
+        .trend-items {
             display: flex;
             flex-wrap: wrap;
             gap: 6px;
-            margin-top: 8px;
-            padding-top: 8px;
-            border-top: 1px solid #e2e8f0;
         }
-        .share-buttons .share-label {
-            font-size: 11px;
-            color: #94a3b8;
-            margin-left: 8px;
-            align-self: center;
-        }
-        .share-buttons a {
-            display: inline-block;
-            padding: 4px 10px;
+        .trend-items span {
+            background: rgba(99,102,241,0.15);
+            padding: 4px 12px;
             border-radius: 30px;
-            text-decoration: none;
-            font-size: 11px;
-            font-weight: 500;
+            font-size: 12px;
+            color: #a5b4fc;
+        }
+        .chatbot-container {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 999;
+        }
+        .chat-toggle {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #6366f1;
+            border: none;
             color: #fff;
-            transition: 0.2s;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(99,102,241,0.3);
         }
-        .share-buttons a:hover {
-            transform: scale(1.02);
+        .chat-window {
+            display: none;
+            position: absolute;
+            bottom: 70px;
+            left: 0;
+            width: 300px;
+            height: 400px;
+            background: #1e293b;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+            flex-direction: column;
         }
-        .share-telegram { background: #0088cc; }
-        .share-whatsapp { background: #25d366; }
-        .share-twitter { background: #1da1f2; }
-        .share-ita { background: #2e7d32; }
-        .share-bale { background: #f9a825; color: #1e293b; }
-        .loading {
-            text-align: center;
-            color: #94a3b8;
-            padding: 30px 0;
+        .chat-window.active { display: flex; }
+        .chat-header {
+            background: #6366f1;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
         }
-        .analysis-box {
-            background: #ffffff;
-            border-radius: 14px;
-            padding: 16px;
-            margin-top: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        .chat-header button {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
         }
-        .analysis-box h3 { color: #2563eb; margin-bottom: 8px; }
-        .analysis-box textarea {
-            width: 100%;
-            height: 70px;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 10px;
-            background: #f8fafc;
-            color: #0f172a;
-            font-family: Tahoma, sans-serif;
-            resize: vertical;
-        }
-        .analysis-box textarea:focus {
-            outline: none;
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
-        }
-        .analysis-box button {
-            width: 100%;
+        .chat-messages {
+            flex: 1;
             padding: 12px;
-            margin-top: 10px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .chat-messages .bot {
+            background: rgba(255,255,255,0.05);
+            padding: 8px 12px;
+            border-radius: 12px;
+            border-bottom-right-radius: 4px;
+            max-width: 85%;
+            align-self: flex-start;
+            font-size: 13px;
+        }
+        .chat-messages .user {
+            background: #6366f1;
+            padding: 8px 12px;
+            border-radius: 12px;
+            border-bottom-left-radius: 4px;
+            max-width: 85%;
+            align-self: flex-end;
+            font-size: 13px;
+        }
+        .chat-input-area {
+            display: flex;
+            padding: 8px 12px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            gap: 6px;
+        }
+        .chat-input-area input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 30px;
+            background: rgba(255,255,255,0.03);
+            color: #e2e8f0;
+        }
+        .chat-input-area button {
+            padding: 8px 16px;
+            background: #6366f1;
+            color: #fff;
             border: none;
             border-radius: 30px;
-            background: #2563eb;
-            color: #fff;
-            font-size: 16px;
-            font-weight: 600;
             cursor: pointer;
-            transition: 0.2s;
         }
-        .analysis-box button:hover { background: #1d4ed8; }
-        #result {
-            margin-top: 12px;
-            padding: 12px;
-            background: #f8fafc;
-            border-radius: 10px;
-            display: none;
-            font-size: 13px;
-            line-height: 1.8;
-            color: #1e293b;
-            border: 1px solid #e2e8f0;
-        }
-        #result .label { color: #2563eb; font-weight: 600; }
-        .sentiment-positive { color: #16a34a; }
-        .sentiment-negative { color: #dc2626; }
-        .sentiment-neutral { color: #eab308; }
-        .no-news {
-            text-align: center;
-            color: #94a3b8;
-            padding: 20px;
-            background: #f8fafc;
-            border-radius: 12px;
-            border: 1px dashed #e2e8f0;
+        @media (max-width: 480px) {
+            .ai-grid { grid-template-columns: 1fr 1fr; }
+            .chat-window { width: 260px; left: -20px; }
         }
     </style>
 </head>
@@ -264,30 +263,31 @@
 
 <div class="container">
     <div class="header">
-        <h1>🧠 <span>امیر</span>خوان</h1>
+        <h1>🧠 امیرخوان AI</h1>
+        <p>دستیار هوشمند با Gemini</p>
     </div>
 
-    <div class="category">
-        <div class="category-title">🇮🇷 داخلی</div>
+    <!-- ===== ترندها ===== -->
+    <div class="card">
+        <div class="card-title">🔥 ترندهای هوشمند</div>
+        <div class="trend-items" id="trendItems">
+            <span>⏳ در حال بارگذاری...</span>
+        </div>
+    </div>
+
+    <!-- ===== خبرگزاری‌ها ===== -->
+    <div class="card">
+        <div class="card-title">📡 رادار خبری</div>
         <div class="tabs" id="internalTabs">
             <button class="active" data-url="https://www.irna.ir/rss" data-lang="fa">ایرنا</button>
             <button data-url="https://www.mehrnews.com/rss" data-lang="fa">مهر</button>
             <button data-url="https://www.imna.ir/rss" data-lang="fa">ایمنا</button>
             <button data-url="https://www.donya-e-eqtesad.com/rss" data-lang="fa">دنیای اقتصاد</button>
-            <button data-url="https://www.hamshahrionline.ir/rss" data-lang="fa">همشهری</button>
-            <button data-url="https://www.khabaronline.ir/rss" data-lang="fa">خبرآنلاین</button>
         </div>
-    </div>
-
-    <div class="category">
-        <div class="category-title">🌍 خارجی و علمی</div>
-        <div class="tabs" id="externalScienceTabs">
+        <div class="tabs" style="margin-top:6px;" id="externalTabs">
             <button data-url="https://www.rt.com/rss" data-lang="en">راشا تودی</button>
             <button data-url="https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml" data-lang="en">نیویورک تایمز</button>
             <button data-url="https://www.theguardian.com/world/rss" data-lang="en">گاردین</button>
-            <button data-url="https://feeds.washingtonpost.com/rss/world" data-lang="en">واشنگتن پست</button>
-            <button data-url="https://www.sciencedaily.com/rss/all.xml" data-lang="en">ساینس‌دیلی</button>
-            <button data-url="https://www.nature.com/nature.rss" data-lang="en">نیچر</button>
         </div>
     </div>
 
@@ -295,82 +295,183 @@
         <div class="loading">⏳ انتخاب کنید...</div>
     </div>
 
-    <div class="analysis-box">
-        <h3>🔎 تحلیل خبر</h3>
-        <textarea id="newsText" placeholder="متن خبر را برای تحلیل وارد کن..."></textarea>
-        <button id="analyzeBtn">🧠 تحلیل کن</button>
-        <div id="result"></div>
+    <!-- ===== ابزارهای هوش مصنوعی ===== -->
+    <div class="card">
+        <div class="card-title">🧠 ابزارهای هوش مصنوعی (با Gemini)</div>
+        <div class="ai-grid">
+            <button class="btn btn-secondary" onclick="aiAction('image')">🎨 تصویر</button>
+            <button class="btn btn-secondary" onclick="aiAction('video')">🎬 فیلم</button>
+            <button class="btn btn-secondary" onclick="aiAction('voice')">🎤 ویس به متن</button>
+            <button class="btn btn-secondary" onclick="aiAction('analyze')">📊 تحلیل</button>
+            <button class="btn btn-secondary" onclick="aiAction('summary')">📝 خلاصه‌سازی</button>
+            <button class="btn btn-secondary" onclick="aiAction('report')">📄 گزارش‌نویسی</button>
+        </div>
+        <div style="margin-top:8px;">
+            <textarea id="aiInput" placeholder="متن، لینک یا موضوع خود را وارد کنید..." rows="2"></textarea>
+        </div>
+        <div id="aiResult" class="result-box"></div>
+    </div>
+
+    <!-- ===== تحلیل خبر ===== -->
+    <div class="card">
+        <div class="card-title">🔎 تحلیل خبر</div>
+        <textarea id="newsText" placeholder="متن خبر را برای تحلیل عمیق وارد کنید..." rows="3"></textarea>
+        <button class="btn" id="analyzeBtn" style="margin-top:8px;">🧠 تحلیل کامل</button>
+        <div id="analysisResult" class="result-box"></div>
+    </div>
+</div>
+
+<!-- ===== چت‌بات ===== -->
+<div class="chatbot-container">
+    <button class="chat-toggle" id="chatToggle">💬</button>
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header">
+            <span>🤖 امیرخوان یار</span>
+            <button id="chatClose">✕</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="bot">👋 سلام! من امیرخوان یار هستم. با Gemini کار می‌کنم.</div>
+        </div>
+        <div class="chat-input-area">
+            <input id="chatInput" placeholder="سوال...">
+            <button id="chatSend">➤</button>
+        </div>
     </div>
 </div>
 
 <script>
 // ================================
-//  تحلیل خبر
+//  کلید Gemini API
 // ================================
-function analyzeNews(text) {
-    const words = text.split(/\s+/);
-    const wordCount = words.length;
-    const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
-    const sentenceCount = sentences.length;
+const GEMINI_API_KEY = 'AQ.Ab8RN6ILZxjXZZ9kYdNaX6mNaBuA7mJymOm5zs6OiVWGBO-eXw';
 
-    let positiveWords = ['خوب','عالی','بهبود','افزایش','پیروزی','موفق','امید','رشد','افتخار','قوی'];
-    let negativeWords = ['بد','وحشت','کاهش','شکست','خطر','بحران','مرگ','آسیب','تحریم','جنگ','تورم'];
-    let positiveCount=0, negativeCount=0;
-    words.forEach(w => {
-        if(positiveWords.some(p => w.includes(p))) positiveCount++;
-        if(negativeWords.some(n => w.includes(n))) negativeCount++;
+// ================================
+//  تابع ارتباط با Gemini
+// ================================
+async function callGemini(prompt) {
+    try {
+        const res = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`,
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+            }
+        );
+        const data = await res.json();
+        if (data.candidates && data.candidates.length > 0) {
+            return data.candidates[0].content.parts[0].text;
+        }
+        return 'پاسخی دریافت نشد. لطفاً دوباره تلاش کنید.';
+    } catch (error) {
+        console.error('خطا:', error);
+        return '⚠️ خطا در ارتباط با Gemini.';
+    }
+}
+
+// ================================
+//  چت‌بات
+// ================================
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleBtn = document.getElementById('chatToggle');
+    const closeBtn = document.getElementById('chatClose');
+    const windowChat = document.getElementById('chatWindow');
+    const sendBtn = document.getElementById('chatSend');
+    const input = document.getElementById('chatInput');
+    const messages = document.getElementById('chatMessages');
+
+    toggleBtn.addEventListener('click', () => windowChat.classList.toggle('active'));
+    closeBtn.addEventListener('click', () => windowChat.classList.remove('active'));
+
+    async function sendMessage() {
+        const text = input.value.trim();
+        if (!text) return;
+        const userDiv = document.createElement('div');
+        userDiv.className = 'user';
+        userDiv.textContent = text;
+        messages.appendChild(userDiv);
+        input.value = '';
+        messages.scrollTop = messages.scrollHeight;
+
+        const loadingDiv = document.createElement('div');
+        loadingDiv.className = 'bot';
+        loadingDiv.textContent = '⏳ ...';
+        messages.appendChild(loadingDiv);
+        messages.scrollTop = messages.scrollHeight;
+
+        const reply = await callGemini(text);
+        loadingDiv.remove();
+        const botDiv = document.createElement('div');
+        botDiv.className = 'bot';
+        botDiv.textContent = reply;
+        messages.appendChild(botDiv);
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendMessage(); });
+});
+
+// ================================
+//  ابزارهای هوش مصنوعی
+// ================================
+async function aiAction(type) {
+    const input = document.getElementById('aiInput');
+    const result = document.getElementById('aiResult');
+    const text = input.value.trim();
+    
+    if (!text) {
+        alert('لطفاً یک متن یا موضوع وارد کنید.');
+        return;
+    }
+
+    result.innerHTML = '<div class="loading">⏳ در حال پردازش با Gemini...</div>';
+    result.classList.add('show');
+
+    let prompt = '';
+    switch(type) {
+        case 'image':
+            prompt = `بر اساس متن زیر، یک تصویر مرتبط پیشنهاد بده و لینک یک تصویر رایگان از Unsplash یا Pexels برای این موضوع پیدا کن. موضوع: ${text}`;
+            break;
+        case 'video':
+            prompt = `بر اساس متن زیر، یک فیلم مرتبط پیشنهاد بده و لینک یک فیلم رایگان از Pexels یا GIPHY برای این موضوع پیدا کن. موضوع: ${text}`;
+            break;
+        case 'voice':
+            prompt = `فرض کن این متن از روی یک فایل صوتی پیاده شده است. آن را ویرایش کن و یک متن روان و رسمی بنویس: ${text}`;
+            break;
+        case 'analyze':
+            prompt = `تحلیل عمیق و کامل این متن را انجام بده. احساسات، موضوع، کلمات کلیدی و خلاصه: ${text}`;
+            break;
+        case 'summary':
+            prompt = `خلاصه‌ای دقیق و کامل از این متن بنویس: ${text}`;
+            break;
+        case 'report':
+            prompt = `یک گزارش حرفه‌ای و ساختاریافته از این متن بنویس: ${text}`;
+            break;
+        default:
+            prompt = `پردازش کن: ${text}`;
+    }
+
+    const response = await callGemini(prompt);
+    result.innerHTML = `<div>✅ ${response}</div>`;
+}
+
+// ================================
+//  استخراج ترندها
+// ================================
+function extractTrends(items) {
+    const allWords = [];
+    items.forEach(item => {
+        const title = item.title || '';
+        const desc = item.description || '';
+        const text = (title + ' ' + desc).replace(/<[^>]*>/g, '');
+        const words = text.split(' ');
+        words.forEach(w => { if (w.length > 4) allWords.push(w); });
     });
-    let sentiment='خنثی', sentimentEmoji='😐';
-    if(positiveCount > negativeCount+2){ sentiment='مثبت'; sentimentEmoji='😊'; }
-    else if(negativeCount > positiveCount+2){ sentiment='منفی'; sentimentEmoji='😞'; }
-
-    let topics=[];
-    if(text.includes('دولت')||text.includes('سیاست')||text.includes('رئیس‌جمهور')) topics.push('سیاسی');
-    if(text.includes('دلار')||text.includes('قیمت')||text.includes('بازار')||text.includes('اقتصاد')) topics.push('اقتصادی');
-    if(text.includes('فوتبال')||text.includes('ورزش')) topics.push('ورزشی');
-    if(text.includes('فناوری')||text.includes('رایانه')||text.includes('هوش مصنوعی')) topics.push('فناوری');
-    if(text.includes('سلامت')||text.includes('درمان')||text.includes('بیمارستان')) topics.push('سلامت');
-    if(topics.length===0) topics.push('عمومی');
-
-    const wordFreq={};
-    words.forEach(w=>{ if(w.length>3) wordFreq[w]=(wordFreq[w]||0)+1; });
-    const sortedWords=Object.entries(wordFreq).sort((a,b)=>b[1]-a[1]);
-    const keywords=sortedWords.slice(0,5).map(item=>item[0]);
-
-    const summary=words.slice(0,50).join(' ')+(words.length>50?'...':'');
-
-    let credibilityScore=5;
-    if(sentenceCount>3) credibilityScore+=1;
-    if(wordCount>50) credibilityScore+=1;
-    if(text.includes('منبع')||text.includes('گزارش')) credibilityScore+=1;
-    if(text.includes('ادعا')||text.includes('شایعه')) credibilityScore-=2;
-    credibilityScore=Math.min(10,Math.max(0,credibilityScore));
-
-    return { wordCount, sentenceCount, sentiment, sentimentEmoji, topics, keywords, summary, credibilityScore };
-}
-
-function displayAnalysis(result) {
-    const div = document.getElementById('result');
-    const sentimentClass = result.sentiment==='مثبت'?'sentiment-positive':result.sentiment==='منفی'?'sentiment-negative':'sentiment-neutral';
-    div.innerHTML = `
-        <div><span class="label">📊 کلمات:</span> ${result.wordCount}</div>
-        <div><span class="label">📝 جملات:</span> ${result.sentenceCount}</div>
-        <div><span class="label">😊 احساسات:</span> <span class="${sentimentClass}">${result.sentimentEmoji} ${result.sentiment}</span></div>
-        <div><span class="label">🏷️ موضوعات:</span> ${result.topics.join('، ')}</div>
-        <div><span class="label">🔑 کلمات کلیدی:</span> ${result.keywords.join('، ')}</div>
-        <div><span class="label">📌 خلاصه:</span> ${result.summary}</div>
-        <div><span class="label">✅ اعتبار:</span> ${result.credibilityScore}/10</div>
-    `;
-    div.style.display='block';
-}
-
-// ================================
-//  استخراج هشتگ
-// ================================
-function extractHashtags(text) {
-    const words = text.split(' ');
-    const importantWords = words.filter(w => w.length > 4).slice(0, 5);
-    return importantWords.map(w => '#' + w.replace(/[^آ-یa-zA-Z0-9]/g, ''));
+    const wordFreq = {};
+    allWords.forEach(w => { wordFreq[w] = (wordFreq[w] || 0) + 1; });
+    const sorted = Object.entries(wordFreq).sort((a, b) => b[1] - a[1]);
+    return sorted.slice(0, 6).map(item => item[0]);
 }
 
 // ================================
@@ -385,9 +486,13 @@ async function fetchNews(rssUrl, fromLang) {
         const data = await response.json();
 
         if (!data.items || data.items.length === 0) {
-            container.innerHTML = '<div class="no-news">📭 خبری برای نمایش وجود ندارد.</div>';
+            container.innerHTML = '<div class="loading">📭 خبری برای نمایش وجود ندارد.</div>';
+            document.getElementById('trendItems').innerHTML = '<span>📭 ترندی یافت نشد</span>';
             return;
         }
+
+        const trends = extractTrends(data.items);
+        document.getElementById('trendItems').innerHTML = trends.map(t => `<span>#${t}</span>`).join('');
 
         const isForeign = fromLang !== 'fa';
         const items = data.items.slice(0, 10);
@@ -396,17 +501,8 @@ async function fetchNews(rssUrl, fromLang) {
         for (const item of items) {
             const link = item.link || '#';
             const title = item.title || 'بدون عنوان';
-            
-            let summary = '';
-            if (item.description) {
-                summary = item.description.replace(/<[^>]*>/g, '').trim();
-            } else if (item.content) {
-                summary = item.content.replace(/<[^>]*>/g, '').trim();
-            } else if (item.title) {
-                summary = item.title;
-            }
+            let summary = item.description ? item.description.replace(/<[^>]*>/g, '').trim() : title;
             if (!summary || summary.length < 5) summary = title;
-            
             const shortSummary = summary.length > 120 ? summary.substring(0, 120) + '...' : summary;
 
             let timeAgo = '';
@@ -414,52 +510,22 @@ async function fetchNews(rssUrl, fromLang) {
                 try {
                     const date = new Date(item.pubDate);
                     const now = new Date();
-                    const diffMs = now - date;
-                    const diffMins = Math.floor(diffMs / 60000);
-                    const diffHours = Math.floor(diffMins / 60);
-                    const diffDays = Math.floor(diffHours / 24);
-                    if (diffDays > 0) timeAgo = `${diffDays} روز پیش`;
-                    else if (diffHours > 0) timeAgo = `${diffHours} ساعت پیش`;
-                    else if (diffMins > 0) timeAgo = `${diffMins} دقیقه پیش`;
-                    else timeAgo = 'لحظاتی پیش';
+                    const diffMins = Math.floor((now - date) / 60000);
+                    if (diffMins < 60) timeAgo = `${diffMins} دقیقه پیش`;
+                    else if (diffMins < 1440) timeAgo = `${Math.floor(diffMins/60)} ساعت پیش`;
+                    else timeAgo = `${Math.floor(diffMins/1440)} روز پیش`;
                 } catch { timeAgo = ''; }
             }
-
-            const hashtags = extractHashtags(title);
-
-            const shareText = encodeURIComponent(title);
-            const shareUrl = encodeURIComponent(link);
-            const telegramLink = `https://t.me/share/url?url=${shareUrl}&text=${shareText}`;
-            const whatsappLink = `https://api.whatsapp.com/send?text=${shareText}%20${shareUrl}`;
-            const twitterLink = `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`;
-            const itaLink = `https://ita.ir/#!/share?url=${shareUrl}&text=${shareText}`;
-            const baleLink = `https://bale.ai/#!/share?url=${shareUrl}&text=${shareText}`;
 
             html += `
                 <div class="news-card" data-link="${link}">
                     <div class="title">📰 ${title}</div>
                     <div class="meta">🕒 ${timeAgo || 'تاریخ نامشخص'}</div>
                     <div class="snippet">${shortSummary}</div>
-                    <div class="hashtags">
-                        ${hashtags.map(tag => `<span>${tag}</span>`).join('')}
-                    </div>
                     <div class="summary-box">
-                        <div class="summary-title">📌 خلاصه خبر</div>
-                        <div>${summary}</div>
-                        ${isForeign ? `
-                            <div style="margin-top:8px;">
-                                <a href="https://translate.google.com/translate?sl=en&tl=fa&u=${encodeURIComponent(link)}" target="_blank" class="translate-link">🌐 ترجمه با گوگل</a>
-                            </div>
-                        ` : ''}
-                        <a href="${link}" target="_blank" class="read-more">🔗 مطالعه کامل خبر در منبع</a>
-                        <div class="share-buttons">
-                            <span class="share-label">📤 اشتراک‌گذاری:</span>
-                            <a href="${telegramLink}" target="_blank" class="share-telegram">📨</a>
-                            <a href="${whatsappLink}" target="_blank" class="share-whatsapp">💬</a>
-                            <a href="${twitterLink}" target="_blank" class="share-twitter">🐦</a>
-                            <a href="${itaLink}" target="_blank" class="share-ita">🟢</a>
-                            <a href="${baleLink}" target="_blank" class="share-bale">🟡</a>
-                        </div>
+                        <div>📌 خلاصه: ${summary}</div>
+                        ${isForeign ? `<div style="margin-top:6px;"><a href="https://translate.google.com/translate?sl=en&tl=fa&u=${encodeURIComponent(link)}" target="_blank" style="color:#818cf8;">🌐 ترجمه با گوگل</a></div>` : ''}
+                        <a href="${link}" target="_blank" style="color:#818cf8;display:inline-block;margin-top:6px;">🔗 مطالعه کامل</a>
                     </div>
                 </div>
             `;
@@ -470,51 +536,9 @@ async function fetchNews(rssUrl, fromLang) {
         document.querySelectorAll('.news-card').forEach(card => {
             card.addEventListener('click', function(e) {
                 if (e.target.tagName === 'A') return;
-                const summaryBox = this.querySelector('.summary-box');
-                const isOpen = summaryBox.classList.contains('show');
+                const box = this.querySelector('.summary-box');
+                const isOpen = box.classList.contains('show');
                 document.querySelectorAll('.news-card .summary-box').forEach(el => el.classList.remove('show'));
                 if (!isOpen) {
-                    summaryBox.classList.add('show');
-                    setTimeout(() => {
-                        this.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 100);
-                }
-            });
-        });
-
-    } catch (error) {
-        container.innerHTML = '<div class="no-news">⚠️ خطا در دریافت اخبار</div>';
-        console.error(error);
-    }
-}
-
-// ================================
-//  دکمه‌ها
-// ================================
-function setupTabs(selector) {
-    document.querySelectorAll(selector).forEach(btn => {
-        btn.addEventListener('click', function() {
-            const parent = this.closest('.tabs');
-            parent.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            const url = this.dataset.url;
-            const lang = this.dataset.lang || 'fa';
-            fetchNews(url, lang);
-        });
-    });
-}
-setupTabs('#internalTabs button');
-setupTabs('#externalScienceTabs button');
-
-document.getElementById('analyzeBtn').addEventListener('click', function() {
-    const text = document.getElementById('newsText').value.trim();
-    if (!text) { alert('⚠️ لطفاً یک متن وارد کن.'); return; }
-    displayAnalysis(analyzeNews(text));
-});
-
-// بارگذاری اولیه (ایرنا)
-fetchNews('https://www.irna.ir/rss', 'fa');
-</script>
-
-</body>
-</html>
+                    box.classList.add('show');
+                    setTimeout(() => this.scrollInto
