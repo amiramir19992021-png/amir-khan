@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>امیرخوان - نسخه پایدار</title>
+    <title>امیرخوان - با تاریخ انتشار</title>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
@@ -81,6 +81,14 @@
             color: #0f172a;
             margin-bottom: 4px;
         }
+        .news-card .meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-size: 12px;
+            color: #64748b;
+            margin: 6px 0 4px;
+        }
         .news-card .snippet {
             font-size: 13px;
             color: #475569;
@@ -129,6 +137,13 @@
             text-decoration: none;
             font-weight: 500;
             font-size: 13px;
+            background: #f0fdf4;
+            padding: 4px 12px;
+            border-radius: 30px;
+            border: 1px solid #bbf7d0;
+        }
+        .news-card .summary-box .translate-link:hover {
+            background: #dcfce7;
         }
         .loading {
             text-align: center;
@@ -338,15 +353,33 @@ async function fetchNews(rssUrl, fromLang) {
             
             const shortSummary = summary.length > 120 ? summary.substring(0, 120) + '...' : summary;
 
+            // محاسبه زمان انتشار
+            let timeAgo = '';
+            if (item.pubDate) {
+                try {
+                    const date = new Date(item.pubDate);
+                    const now = new Date();
+                    const diffMs = now - date;
+                    const diffMins = Math.floor(diffMs / 60000);
+                    const diffHours = Math.floor(diffMins / 60);
+                    const diffDays = Math.floor(diffHours / 24);
+                    if (diffDays > 0) timeAgo = `${diffDays} روز پیش`;
+                    else if (diffHours > 0) timeAgo = `${diffHours} ساعت پیش`;
+                    else if (diffMins > 0) timeAgo = `${diffMins} دقیقه پیش`;
+                    else timeAgo = 'لحظاتی پیش';
+                } catch { timeAgo = ''; }
+            }
+
             html += `
                 <div class="news-card" data-link="${link}">
                     <div class="title">📰 ${title}</div>
+                    <div class="meta">🕒 ${timeAgo || 'تاریخ نامشخص'}</div>
                     <div class="snippet">${shortSummary}</div>
                     <div class="summary-box">
                         <div class="summary-title">📌 خلاصه خبر</div>
                         <div>${summary}</div>
                         ${isForeign ? `
-                            <div style="margin-top:6px;">
+                            <div style="margin-top:8px;">
                                 <a href="https://translate.google.com/translate?sl=en&tl=fa&u=${encodeURIComponent(link)}" target="_blank" class="translate-link">🌐 ترجمه با گوگل</a>
                             </div>
                         ` : ''}
