@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>امیرخوان - با جستجو</title>
+    <title>امیرخوان - با هشتگ خودکار</title>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
@@ -58,46 +58,6 @@
             background: #2563eb;
             color: #fff;
         }
-        .search-box {
-            display: flex;
-            gap: 8px;
-            margin: 12px 0;
-            background: #ffffff;
-            border-radius: 30px;
-            padding: 4px 8px 4px 4px;
-            border: 1px solid #e2e8f0;
-            transition: 0.2s;
-        }
-        .search-box:focus-within {
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
-        }
-        .search-box input {
-            flex: 1;
-            border: none;
-            padding: 8px 12px;
-            outline: none;
-            font-family: Tahoma, sans-serif;
-            font-size: 13px;
-            background: transparent;
-            color: #1e293b;
-        }
-        .search-box input::placeholder {
-            color: #94a3b8;
-        }
-        .search-box button {
-            background: #2563eb;
-            color: #fff;
-            border: none;
-            border-radius: 30px;
-            padding: 6px 16px;
-            font-size: 13px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .search-box button:hover {
-            background: #1d4ed8;
-        }
         .news-list {
             display: flex;
             flex-direction: column;
@@ -134,6 +94,21 @@
             color: #475569;
             line-height: 1.6;
             margin-top: 2px;
+        }
+        .news-card .hashtags {
+            margin-top: 6px;
+            font-size: 12px;
+            color: #7c3aed;
+            direction: ltr;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        .news-card .hashtags span {
+            background: #f3f0ff;
+            padding: 2px 8px;
+            border-radius: 30px;
+            border: 1px solid #e9d5ff;
         }
         .news-card .summary-box {
             display: none;
@@ -283,14 +258,6 @@
             border-radius: 12px;
             border: 1px dashed #e2e8f0;
         }
-        .no-result {
-            text-align: center;
-            color: #94a3b8;
-            padding: 20px;
-            background: #f8fafc;
-            border-radius: 12px;
-            border: 1px dashed #e2e8f0;
-        }
     </style>
 </head>
 <body>
@@ -322,12 +289,6 @@
             <button data-url="https://www.sciencedaily.com/rss/all.xml" data-lang="en">ساینس‌دیلی</button>
             <button data-url="https://www.nature.com/nature.rss" data-lang="en">نیچر</button>
         </div>
-    </div>
-
-    <!-- ===== بخش جستجو ===== -->
-    <div class="search-box">
-        <input type="text" id="searchInput" placeholder="جستجوی خبر...">
-        <button id="searchBtn">🔍</button>
     </div>
 
     <div class="news-list" id="newsList">
@@ -404,15 +365,18 @@ function displayAnalysis(result) {
 }
 
 // ================================
+//  استخراج هشتگ
+// ================================
+function extractHashtags(text) {
+    const words = text.split(' ');
+    const importantWords = words.filter(w => w.length > 4).slice(0, 5);
+    return importantWords.map(w => '#' + w.replace(/[^آ-یa-zA-Z0-9]/g, ''));
+}
+
+// ================================
 //  دریافت اخبار
 // ================================
-let allNewsItems = [];
-let currentRssUrl = '';
-let currentLang = '';
-
 async function fetchNews(rssUrl, fromLang) {
-    currentRssUrl = rssUrl;
-    currentLang = fromLang;
     const container = document.getElementById('newsList');
     container.innerHTML = '<div class="loading">⏳ در حال بارگذاری...</div>';
     try {
@@ -422,14 +386,101 @@ async function fetchNews(rssUrl, fromLang) {
 
         if (!data.items || data.items.length === 0) {
             container.innerHTML = '<div class="no-news">📭 خبری برای نمایش وجود ندارد.</div>';
-            allNewsItems = [];
             return;
         }
 
         const isForeign = fromLang !== 'fa';
         const items = data.items.slice(0, 10);
-        allNewsItems = items.map(item => ({ item, isForeign }));
-        renderNews(allNewsItems);
+        let html = '';
+
+        for (const item of items) {
+            const link = item.link || '#';
+            const title = item.title || 'بدون عنوان';
+            
+            let summary = '';
+            if (item.description) {
+                summary = item.description.replace(/<[^>]*>/g, '').trim();
+            } else if (item.content) {
+                summary = item.content.replace(/<[^>]*>/g, '').trim();
+            } else if (item.title) {
+                summary = item.title;
+            }
+            if (!summary || summary.length < 5) summary = title;
+            
+            const shortSummary = summary.length > 120 ? summary.substring(0, 120) + '...' : summary;
+
+            let timeAgo = '';
+            if (item.pubDate) {
+                try {
+                    const date = new Date(item.pubDate);
+                    const now = new Date();
+                    const diffMs = now - date;
+                    const diffMins = Math.floor(diffMs / 60000);
+                    const diffHours = Math.floor(diffMins / 60);
+                    const diffDays = Math.floor(diffHours / 24);
+                    if (diffDays > 0) timeAgo = `${diffDays} روز پیش`;
+                    else if (diffHours > 0) timeAgo = `${diffHours} ساعت پیش`;
+                    else if (diffMins > 0) timeAgo = `${diffMins} دقیقه پیش`;
+                    else timeAgo = 'لحظاتی پیش';
+                } catch { timeAgo = ''; }
+            }
+
+            const hashtags = extractHashtags(title);
+
+            const shareText = encodeURIComponent(title);
+            const shareUrl = encodeURIComponent(link);
+            const telegramLink = `https://t.me/share/url?url=${shareUrl}&text=${shareText}`;
+            const whatsappLink = `https://api.whatsapp.com/send?text=${shareText}%20${shareUrl}`;
+            const twitterLink = `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`;
+            const itaLink = `https://ita.ir/#!/share?url=${shareUrl}&text=${shareText}`;
+            const baleLink = `https://bale.ai/#!/share?url=${shareUrl}&text=${shareText}`;
+
+            html += `
+                <div class="news-card" data-link="${link}">
+                    <div class="title">📰 ${title}</div>
+                    <div class="meta">🕒 ${timeAgo || 'تاریخ نامشخص'}</div>
+                    <div class="snippet">${shortSummary}</div>
+                    <div class="hashtags">
+                        ${hashtags.map(tag => `<span>${tag}</span>`).join('')}
+                    </div>
+                    <div class="summary-box">
+                        <div class="summary-title">📌 خلاصه خبر</div>
+                        <div>${summary}</div>
+                        ${isForeign ? `
+                            <div style="margin-top:8px;">
+                                <a href="https://translate.google.com/translate?sl=en&tl=fa&u=${encodeURIComponent(link)}" target="_blank" class="translate-link">🌐 ترجمه با گوگل</a>
+                            </div>
+                        ` : ''}
+                        <a href="${link}" target="_blank" class="read-more">🔗 مطالعه کامل خبر در منبع</a>
+                        <div class="share-buttons">
+                            <span class="share-label">📤 اشتراک‌گذاری:</span>
+                            <a href="${telegramLink}" target="_blank" class="share-telegram">📨</a>
+                            <a href="${whatsappLink}" target="_blank" class="share-whatsapp">💬</a>
+                            <a href="${twitterLink}" target="_blank" class="share-twitter">🐦</a>
+                            <a href="${itaLink}" target="_blank" class="share-ita">🟢</a>
+                            <a href="${baleLink}" target="_blank" class="share-bale">🟡</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        container.innerHTML = html;
+
+        document.querySelectorAll('.news-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') return;
+                const summaryBox = this.querySelector('.summary-box');
+                const isOpen = summaryBox.classList.contains('show');
+                document.querySelectorAll('.news-card .summary-box').forEach(el => el.classList.remove('show'));
+                if (!isOpen) {
+                    summaryBox.classList.add('show');
+                    setTimeout(() => {
+                        this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 100);
+                }
+            });
+        });
 
     } catch (error) {
         container.innerHTML = '<div class="no-news">⚠️ خطا در دریافت اخبار</div>';
@@ -438,106 +489,32 @@ async function fetchNews(rssUrl, fromLang) {
 }
 
 // ================================
-//  رندر اخبار (با قابلیت فیلتر)
+//  دکمه‌ها
 // ================================
-function renderNews(newsArray) {
-    const container = document.getElementById('newsList');
-    
-    if (!newsArray || newsArray.length === 0) {
-        container.innerHTML = '<div class="no-result">🔍 خبری با این کلمه یافت نشد.</div>';
-        return;
-    }
-
-    let html = '';
-    for (const { item, isForeign } of newsArray) {
-        const link = item.link || '#';
-        const title = item.title || 'بدون عنوان';
-        
-        let summary = '';
-        if (item.description) {
-            summary = item.description.replace(/<[^>]*>/g, '').trim();
-        } else if (item.content) {
-            summary = item.content.replace(/<[^>]*>/g, '').trim();
-        } else if (item.title) {
-            summary = item.title;
-        }
-        if (!summary || summary.length < 5) summary = title;
-        
-        const shortSummary = summary.length > 120 ? summary.substring(0, 120) + '...' : summary;
-
-        let timeAgo = '';
-        if (item.pubDate) {
-            try {
-                const date = new Date(item.pubDate);
-                const now = new Date();
-                const diffMs = now - date;
-                const diffMins = Math.floor(diffMs / 60000);
-                const diffHours = Math.floor(diffMins / 60);
-                const diffDays = Math.floor(diffHours / 24);
-                if (diffDays > 0) timeAgo = `${diffDays} روز پیش`;
-                else if (diffHours > 0) timeAgo = `${diffHours} ساعت پیش`;
-                else if (diffMins > 0) timeAgo = `${diffMins} دقیقه پیش`;
-                else timeAgo = 'لحظاتی پیش';
-            } catch { timeAgo = ''; }
-        }
-
-        const shareText = encodeURIComponent(title);
-        const shareUrl = encodeURIComponent(link);
-        const telegramLink = `https://t.me/share/url?url=${shareUrl}&text=${shareText}`;
-        const whatsappLink = `https://api.whatsapp.com/send?text=${shareText}%20${shareUrl}`;
-        const twitterLink = `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`;
-        const itaLink = `https://ita.ir/#!/share?url=${shareUrl}&text=${shareText}`;
-        const baleLink = `https://bale.ai/#!/share?url=${shareUrl}&text=${shareText}`;
-
-        html += `
-            <div class="news-card" data-link="${link}">
-                <div class="title">📰 ${title}</div>
-                <div class="meta">🕒 ${timeAgo || 'تاریخ نامشخص'}</div>
-                <div class="snippet">${shortSummary}</div>
-                <div class="summary-box">
-                    <div class="summary-title">📌 خلاصه خبر</div>
-                    <div>${summary}</div>
-                    ${isForeign ? `
-                        <div style="margin-top:8px;">
-                            <a href="https://translate.google.com/translate?sl=en&tl=fa&u=${encodeURIComponent(link)}" target="_blank" class="translate-link">🌐 ترجمه با گوگل</a>
-                        </div>
-                    ` : ''}
-                    <a href="${link}" target="_blank" class="read-more">🔗 مطالعه کامل خبر در منبع</a>
-                    <div class="share-buttons">
-                        <span class="share-label">📤 اشتراک‌گذاری:</span>
-                        <a href="${telegramLink}" target="_blank" class="share-telegram">📨</a>
-                        <a href="${whatsappLink}" target="_blank" class="share-whatsapp">💬</a>
-                        <a href="${twitterLink}" target="_blank" class="share-twitter">🐦</a>
-                        <a href="${itaLink}" target="_blank" class="share-ita">🟢</a>
-                        <a href="${baleLink}" target="_blank" class="share-bale">🟡</a>
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-
-    container.innerHTML = html;
-
-    document.querySelectorAll('.news-card').forEach(card => {
-        card.addEventListener('click', function(e) {
-            if (e.target.tagName === 'A') return;
-            const summaryBox = this.querySelector('.summary-box');
-            const isOpen = summaryBox.classList.contains('show');
-            document.querySelectorAll('.news-card .summary-box').forEach(el => el.classList.remove('show'));
-            if (!isOpen) {
-                summaryBox.classList.add('show');
-                setTimeout(() => {
-                    this.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }, 100);
-            }
+function setupTabs(selector) {
+    document.querySelectorAll(selector).forEach(btn => {
+        btn.addEventListener('click', function() {
+            const parent = this.closest('.tabs');
+            parent.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            const url = this.dataset.url;
+            const lang = this.dataset.lang || 'fa';
+            fetchNews(url, lang);
         });
     });
 }
+setupTabs('#internalTabs button');
+setupTabs('#externalScienceTabs button');
 
-// ================================
-//  جستجو
-// ================================
-function searchNews() {
-    const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
-    if (!keyword) {
-        renderNews(allNewsIt
+document.getElementById('analyzeBtn').addEventListener('click', function() {
+    const text = document.getElementById('newsText').value.trim();
+    if (!text) { alert('⚠️ لطفاً یک متن وارد کن.'); return; }
+    displayAnalysis(analyzeNews(text));
+});
+
+// بارگذاری اولیه (ایرنا)
+fetchNews('https://www.irna.ir/rss', 'fa');
+</script>
+
+</body>
+</html>
