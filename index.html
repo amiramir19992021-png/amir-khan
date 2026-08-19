@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>امیرخوان - نسخه نهایی</title>
+    <title>امیرخوان - با ترجمه فعال</title>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
@@ -130,6 +130,21 @@
         .news-card .summary-box .read-more:hover {
             text-decoration: underline;
         }
+        .news-card .summary-box .translate-link {
+            display: inline-block;
+            margin-top: 6px;
+            color: #16a34a;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 13px;
+            background: #f0fdf4;
+            padding: 4px 12px;
+            border-radius: 30px;
+            border: 1px solid #bbf7d0;
+        }
+        .news-card .summary-box .translate-link:hover {
+            background: #dcfce7;
+        }
         .loading {
             text-align: center;
             color: #94a3b8;
@@ -215,7 +230,7 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- بخش خبرگزاری‌های داخلی (۱۰ عدد)            -->
+    <!-- بخش خبرگزاری‌های داخلی (۶ عدد)            -->
     <!-- ========================================== -->
     <div class="category">
         <div class="category-title">🇮🇷 داخلی</div>
@@ -224,33 +239,23 @@
             <button data-url="https://www.mehrnews.com/rss" data-lang="fa">مهر</button>
             <button data-url="https://www.imna.ir/rss" data-lang="fa">ایمنا</button>
             <button data-url="https://www.donya-e-eqtesad.com/rss" data-lang="fa">دنیای اقتصاد</button>
-            <button data-url="https://www.ilna.news/rss" data-lang="fa">ایلنا</button>
-            <button data-url="https://www.ibna.ir/rss" data-lang="fa">ایبنا</button>
-            <button data-url="https://icana.ir/rss" data-lang="fa">خانه ملت</button>
             <button data-url="https://www.hamshahrionline.ir/rss" data-lang="fa">همشهری</button>
             <button data-url="https://www.khabaronline.ir/rss" data-lang="fa">خبرآنلاین</button>
-            <button data-url="https://www.iribnews.ir/rss" data-lang="fa">صدا و سیما</button>
         </div>
     </div>
 
     <!-- ========================================== -->
-    <!-- بخش خارجی و علمی (۱۰ منبع)                -->
+    <!-- بخش خارجی و علمی (۶ منبع)                 -->
     <!-- ========================================== -->
     <div class="category">
         <div class="category-title">🌍 خارجی و علمی</div>
         <div class="tabs" id="externalScienceTabs">
-            <!-- خارجی -->
             <button data-url="https://www.rt.com/rss" data-lang="en">راشا تودی</button>
             <button data-url="https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml" data-lang="en">نیویورک تایمز</button>
             <button data-url="https://www.theguardian.com/world/rss" data-lang="en">گاردین</button>
             <button data-url="https://feeds.washingtonpost.com/rss/world" data-lang="en">واشنگتن پست</button>
-            <button data-url="https://www.nbcnews.com/feed" data-lang="en">ان‌بی‌سی</button>
-            <button data-url="https://www.cnbc.com/id/100003114/device/rss/rss.html" data-lang="en">سی‌ان‌بی‌سی</button>
-            <button data-url="https://feeds.bloomberg.com/markets/news.rss" data-lang="en">بلومبرگ</button>
-            <!-- علمی -->
             <button data-url="https://www.sciencedaily.com/rss/all.xml" data-lang="en">ساینس‌دیلی</button>
             <button data-url="https://www.nature.com/nature.rss" data-lang="en">نیچر</button>
-            <button data-url="https://www.sciencealert.com/feed" data-lang="en">ساینس‌آلرت</button>
         </div>
     </div>
 
@@ -369,6 +374,9 @@ async function fetchNews(rssUrl, fromLang) {
             
             const shortSummary = summary.length > 120 ? summary.substring(0, 120) + '...' : summary;
 
+            // ساخت لینک ترجمه با گوگل (فعال)
+            const translateUrl = `https://translate.google.com/translate?sl=en&tl=fa&u=${encodeURIComponent(link)}`;
+
             html += `
                 <div class="news-card" data-link="${link}">
                     <div class="title">📰 ${title}</div>
@@ -378,8 +386,8 @@ async function fetchNews(rssUrl, fromLang) {
                         <div class="summary-title">📌 خلاصه خبر</div>
                         <div>${summary}</div>
                         ${isForeign ? `
-                            <div style="margin-top:6px;">
-                                <a href="https://translate.google.com/translate?sl=en&tl=fa&u=${encodeURIComponent(link)}" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:500;">🌐 ترجمه با گوگل</a>
+                            <div style="margin-top:8px;">
+                                <a href="${translateUrl}" target="_blank" class="translate-link">🌐 ترجمه با گوگل</a>
                             </div>
                         ` : ''}
                         <a href="${link}" target="_blank" class="read-more">🔗 مطالعه کامل خبر در منبع</a>
