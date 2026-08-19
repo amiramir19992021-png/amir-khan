@@ -215,7 +215,7 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- بخش خبرگزاری‌های داخلی (۳۱ خبرگزاری)       -->
+    <!-- بخش خبرگزاری‌های داخلی (۲۰ خبرگزاری)       -->
     <!-- ========================================== -->
     <div class="category">
         <div class="category-title">🇮🇷 داخلی</div>
@@ -240,26 +240,16 @@
             <button data-url="https://www.iribnews.ir/rss" data-lang="fa">صدا و سیما</button>
             <button data-url="https://ana.ir/rss" data-lang="fa">آنا</button>
             <button data-url="https://borna.news/rss" data-lang="fa">برنا</button>
-            <button data-url="https://www.asriran.com/rss" data-lang="fa">عصر ایران</button>
-            <button data-url="https://www.jahannews.com/rss" data-lang="fa">جهان نیوز</button>
-            <button data-url="https://www.mashreghnews.ir/rss" data-lang="fa">مشرق</button>
-            <button data-url="https://afkarnews.ir/rss" data-lang="fa">افکارنیوز</button>
-            <button data-url="https://www.vatanemrooz.ir/rss" data-lang="fa">وطن امروز</button>
-            <button data-url="https://www.qudsonline.ir/rss" data-lang="fa">قدس آنلاین</button>
-            <button data-url="https://www.javanonline.ir/rss" data-lang="fa">جوان آنلاین</button>
-            <button data-url="https://hawzah.net/rss" data-lang="fa">حوزه</button>
-            <button data-url="https://www.kayhan.ir/rss" data-lang="fa">کیهان</button>
-            <button data-url="https://www.jomhourieslami.ir/rss" data-lang="fa">جمهوری اسلامی</button>
-            <button data-url="https://www.varzesh3.com/rss" data-lang="fa">ورزش ۳</button>
         </div>
     </div>
 
     <!-- ========================================== -->
-    <!-- بخش خبرگزاری‌های خارجی (۲۰ خبرگزاری)      -->
+    <!-- بخش خارجی و علمی (۱۲ منبع)                -->
     <!-- ========================================== -->
     <div class="category">
-        <div class="category-title">🌍 خارجی</div>
-        <div class="tabs" id="externalTabs">
+        <div class="category-title">🌍 خارجی و علمی</div>
+        <div class="tabs" id="externalScienceTabs">
+            <!-- خارجی -->
             <button data-url="https://www.rt.com/rss" data-lang="en">راشا تودی</button>
             <button data-url="https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml" data-lang="en">نیویورک تایمز</button>
             <button data-url="https://www.theguardian.com/world/rss" data-lang="en">گاردین</button>
@@ -268,29 +258,8 @@
             <button data-url="https://www.cnbc.com/id/100003114/device/rss/rss.html" data-lang="en">سی‌ان‌بی‌سی</button>
             <button data-url="https://feeds.bloomberg.com/markets/news.rss" data-lang="en">بلومبرگ</button>
             <button data-url="https://www.aljazeera.net/feed/rss" data-lang="ar">الجزیره</button>
-            <button data-url="https://www.bbc.com/persia/index.xml" data-lang="fa">بی‌بی‌سی</button>
-            <button data-url="https://www.euronews.com/rss/persia" data-lang="fa">یورونیوز</button>
-            <button data-url="https://www.alarabiya.net/feed/persian" data-lang="fa">العربیه</button>
-            <button data-url="http://rss.cnn.com/rss/edition.rss" data-lang="en">سی‌ان‌ان</button>
-            <button data-url="https://feeds.a.dj.com/rss/RSSWorldNews.xml" data-lang="en">وال استریت ژورنال</button>
-            <button data-url="https://www.ft.com/?format=rss" data-lang="en">فایننشال تایمز</button>
-            <button data-url="https://www.france24.com/en/rss" data-lang="en">فرانس ۲۴</button>
-            <button data-url="http://www.npr.org/rss/rss.php?id=1004" data-lang="en">ان‌پی‌آر</button>
-            <button data-url="https://www.scmp.com/rss/91/feed" data-lang="en">ساوت چاینا مورنینگ پست</button>
-            <button data-url="https://rss.dw.com/xml/rss-en-all" data-lang="en">دویچه وله</button>
-            <button data-url="https://tass.com/rss" data-lang="en">تاس</button>
-            <button data-url="https://www.aa.com.tr/en/rss/default" data-lang="en">آنادولو</button>
-        </div>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- بخش علمی (۵ منبع)                         -->
-    <!-- ========================================== -->
-    <div class="category">
-        <div class="category-title">🧬 علمی</div>
-        <div class="tabs" id="scienceTabs">
+            <!-- علمی -->
             <button data-url="https://www.sciencedaily.com/rss/all.xml" data-lang="en">ساینس‌دیلی</button>
-            <button data-url="https://pubmed.ncbi.nlm.nih.gov/feed/" data-lang="en">پاب‌مد</button>
             <button data-url="https://www.nature.com/nature.rss" data-lang="en">نیچر</button>
             <button data-url="https://www.sciencealert.com/feed" data-lang="en">ساینس‌آلرت</button>
             <button data-url="https://www.eurekalert.org/rss/news.xml" data-lang="en">یورک‌آلرت</button>
@@ -317,7 +286,7 @@
 
 <script>
 // ================================
-//  تحلیل خبر (پیشرفته)
+//  تحلیل خبر
 // ================================
 function analyzeNews(text) {
     const words = text.split(/\s+/);
@@ -377,36 +346,17 @@ function displayAnalysis(result) {
 }
 
 // ================================
-//  دریافت اخبار با پشتیبانی از Fallback
+//  دریافت اخبار
 // ================================
-async function fetchNews(rssUrl, fromLang, fallbackUrl = null) {
+async function fetchNews(rssUrl, fromLang) {
     const container = document.getElementById('newsList');
     container.innerHTML = '<div class="loading">⏳ در حال بارگذاری...</div>';
-    
     try {
-        let response = null;
-        let data = null;
-        
-        // اگر آدرس مستقیماً به rss2json اشاره کند
-        if (rssUrl.includes('rss2json')) {
-            response = await fetch(rssUrl);
-            data = await response.json();
-        } else {
-            // روش معمول: تبدیل RSS به JSON از طریق rss2json
-            const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
-            response = await fetch(apiUrl);
-            data = await response.json();
-        }
+        const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+        const response = await fetch(apiUrl);
+        const data = await response.json();
 
-        // اگر داده معتبر نبود و fallback وجود داشت، از آن استفاده کن
-        if ((!data || !data.items || data.items.length === 0) && fallbackUrl) {
-            console.log(`⚠️ استفاده از Fallback برای: ${rssUrl}`);
-            const fallbackApiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(fallbackUrl)}`;
-            response = await fetch(fallbackApiUrl);
-            data = await response.json();
-        }
-
-        if (!data || !data.items || data.items.length === 0) {
+        if (!data.items || data.items.length === 0) {
             container.innerHTML = '<div class="no-news">📭 خبری برای نمایش وجود ندارد.</div>';
             return;
         }
@@ -453,4 +403,53 @@ async function fetchNews(rssUrl, fromLang, fallbackUrl = null) {
         container.innerHTML = html;
 
         document.querySelectorAll('.news-card').forEach(card => {
-            card.addEventListener('cli
+            card.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') return;
+                const summaryBox = this.querySelector('.summary-box');
+                const isOpen = summaryBox.classList.contains('show');
+                document.querySelectorAll('.news-card .summary-box').forEach(el => el.classList.remove('show'));
+                if (!isOpen) {
+                    summaryBox.classList.add('show');
+                    setTimeout(() => {
+                        this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 100);
+                }
+            });
+        });
+
+    } catch (error) {
+        container.innerHTML = '<div class="no-news">⚠️ خطا در دریافت اخبار</div>';
+        console.error(error);
+    }
+}
+
+// ================================
+//  دکمه‌ها
+// ================================
+function setupTabs(selector) {
+    document.querySelectorAll(selector).forEach(btn => {
+        btn.addEventListener('click', function() {
+            const parent = this.closest('.tabs');
+            parent.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            const url = this.dataset.url;
+            const lang = this.dataset.lang || 'fa';
+            fetchNews(url, lang);
+        });
+    });
+}
+setupTabs('#internalTabs button');
+setupTabs('#externalScienceTabs button');
+
+document.getElementById('analyzeBtn').addEventListener('click', function() {
+    const text = document.getElementById('newsText').value.trim();
+    if (!text) { alert('⚠️ لطفاً یک متن وارد کن.'); return; }
+    displayAnalysis(analyzeNews(text));
+});
+
+// بارگذاری اولیه (ایرنا)
+fetchNews('https://www.irna.ir/rss', 'fa');
+</script>
+
+</body>
+</html>
