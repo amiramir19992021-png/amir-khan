@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>امیرخوان - نسخه نهایی</title>
+    <title>امیرخوان - نسخه کامل</title>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
@@ -25,22 +25,6 @@
         }
         .header h1 { font-size: 26px; color: #2563eb; }
         .header h1 span { color: #1e40af; }
-        .header .ai-link {
-            display: inline-block;
-            margin-top: 8px;
-            padding: 6px 18px;
-            background: #7c3aed;
-            color: #fff;
-            border-radius: 30px;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 600;
-            transition: 0.2s;
-        }
-        .header .ai-link:hover {
-            background: #6d28d9;
-            transform: scale(1.02);
-        }
         .category {
             background: #ffffff;
             border-radius: 14px;
@@ -73,12 +57,6 @@
         .tabs button.active {
             background: #2563eb;
             color: #fff;
-        }
-        .news-stats {
-            font-size: 12px;
-            color: #94a3b8;
-            text-align: left;
-            margin-bottom: 8px;
         }
         .news-list {
             display: flex;
@@ -265,30 +243,6 @@
             border-radius: 12px;
             border: 1px dashed #e2e8f0;
         }
-        .back-to-top {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: #2563eb;
-            color: #fff;
-            border: none;
-            font-size: 22px;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(37,99,235,0.3);
-            display: none;
-            transition: 0.2s;
-            z-index: 100;
-        }
-        .back-to-top:hover {
-            background: #1d4ed8;
-            transform: scale(1.05);
-        }
-        @media (max-width: 480px) {
-            .header .ai-link { font-size: 11px; padding: 4px 12px; }
-        }
     </style>
 </head>
 <body>
@@ -296,9 +250,6 @@
 <div class="container">
     <div class="header">
         <h1>🧠 <span>امیر</span>خوان</h1>
-        <div>
-            <a href="#" class="ai-link" id="aiLink">🤖 هوش مصنوعی (به‌زودی)</a>
-        </div>
     </div>
 
     <div class="category">
@@ -325,7 +276,6 @@
         </div>
     </div>
 
-    <div class="news-stats" id="newsStats">📰 ۰ خبر</div>
     <div class="news-list" id="newsList">
         <div class="loading">⏳ انتخاب کنید...</div>
     </div>
@@ -338,28 +288,7 @@
     </div>
 </div>
 
-<button class="back-to-top" id="backToTop" title="بازگشت به بالا">⬆</button>
-
 <script>
-// ================================
-//  دکمه بازگشت به بالا
-// ================================
-const backBtn = document.getElementById('backToTop');
-window.addEventListener('scroll', () => {
-    backBtn.style.display = window.scrollY > 300 ? 'block' : 'none';
-});
-backBtn.addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-});
-
-// ================================
-//  لینک هوش مصنوعی (موقت)
-// ================================
-document.getElementById('aiLink').addEventListener('click', function(e) {
-    e.preventDefault();
-    alert('🤖 پروژه هوش مصنوعی امیرخوان به‌زودی راه‌اندازی می‌شود!');
-});
-
 // ================================
 //  تحلیل خبر
 // ================================
@@ -425,7 +354,6 @@ function displayAnalysis(result) {
 // ================================
 async function fetchNews(rssUrl, fromLang) {
     const container = document.getElementById('newsList');
-    const stats = document.getElementById('newsStats');
     container.innerHTML = '<div class="loading">⏳ در حال بارگذاری...</div>';
     try {
         const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
@@ -434,13 +362,11 @@ async function fetchNews(rssUrl, fromLang) {
 
         if (!data.items || data.items.length === 0) {
             container.innerHTML = '<div class="no-news">📭 خبری برای نمایش وجود ندارد.</div>';
-            stats.textContent = '📰 ۰ خبر';
             return;
         }
 
         const isForeign = fromLang !== 'fa';
         const items = data.items.slice(0, 10);
-        stats.textContent = `📰 ${items.length} خبر`;
         let html = '';
 
         for (const item of items) {
@@ -521,4 +447,45 @@ async function fetchNews(rssUrl, fromLang) {
                 if (!isOpen) {
                     summaryBox.classList.add('show');
                     setTimeout(() => {
-                        this.scrollIntoView({ behavior: 'smooth', block:
+                        this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 100);
+                }
+            });
+        });
+
+    } catch (error) {
+        container.innerHTML = '<div class="no-news">⚠️ خطا در دریافت اخبار</div>';
+        console.error(error);
+    }
+}
+
+// ================================
+//  دکمه‌ها
+// ================================
+function setupTabs(selector) {
+    document.querySelectorAll(selector).forEach(btn => {
+        btn.addEventListener('click', function() {
+            const parent = this.closest('.tabs');
+            parent.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            const url = this.dataset.url;
+            const lang = this.dataset.lang || 'fa';
+            fetchNews(url, lang);
+        });
+    });
+}
+setupTabs('#internalTabs button');
+setupTabs('#externalScienceTabs button');
+
+document.getElementById('analyzeBtn').addEventListener('click', function() {
+    const text = document.getElementById('newsText').value.trim();
+    if (!text) { alert('⚠️ لطفاً یک متن وارد کن.'); return; }
+    displayAnalysis(analyzeNews(text));
+});
+
+// بارگذاری اولیه (ایرنا)
+fetchNews('https://www.irna.ir/rss', 'fa');
+</script>
+
+</body>
+</html>
