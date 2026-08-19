@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>امیرخوان - با تاریخ انتشار</title>
+    <title>امیرخوان - با اشتراک‌گذاری کامل</title>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
@@ -145,6 +145,30 @@
         .news-card .summary-box .translate-link:hover {
             background: #dcfce7;
         }
+        .share-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .share-buttons a {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 500;
+            color: #fff;
+            transition: 0.2s;
+        }
+        .share-buttons a:hover {
+            transform: scale(1.02);
+        }
+        .share-telegram { background: #0088cc; }
+        .share-whatsapp { background: #25d366; }
+        .share-twitter { background: #1da1f2; }
+        .share-ita { background: #2e7d32; }
+        .share-bale { background: #f9a825; color: #1e293b; }
         .loading {
             text-align: center;
             color: #94a3b8;
@@ -353,7 +377,6 @@ async function fetchNews(rssUrl, fromLang) {
             
             const shortSummary = summary.length > 120 ? summary.substring(0, 120) + '...' : summary;
 
-            // محاسبه زمان انتشار
             let timeAgo = '';
             if (item.pubDate) {
                 try {
@@ -370,6 +393,15 @@ async function fetchNews(rssUrl, fromLang) {
                 } catch { timeAgo = ''; }
             }
 
+            // لینک‌های اشتراک‌گذاری
+            const shareText = encodeURIComponent(title);
+            const shareUrl = encodeURIComponent(link);
+            const telegramLink = `https://t.me/share/url?url=${shareUrl}&text=${shareText}`;
+            const whatsappLink = `https://api.whatsapp.com/send?text=${shareText}%20${shareUrl}`;
+            const twitterLink = `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`;
+            const itaLink = `https://ita.ir/share?url=${shareUrl}&text=${shareText}`;
+            const baleLink = `https://bale.ai/share?url=${shareUrl}&text=${shareText}`;
+
             html += `
                 <div class="news-card" data-link="${link}">
                     <div class="title">📰 ${title}</div>
@@ -383,6 +415,13 @@ async function fetchNews(rssUrl, fromLang) {
                                 <a href="https://translate.google.com/translate?sl=en&tl=fa&u=${encodeURIComponent(link)}" target="_blank" class="translate-link">🌐 ترجمه با گوگل</a>
                             </div>
                         ` : ''}
+                        <div class="share-buttons">
+                            <a href="${telegramLink}" target="_blank" class="share-telegram">📨 تلگرام</a>
+                            <a href="${whatsappLink}" target="_blank" class="share-whatsapp">💬 واتساپ</a>
+                            <a href="${twitterLink}" target="_blank" class="share-twitter">🐦 توییتر</a>
+                            <a href="${itaLink}" target="_blank" class="share-ita">🟢 ایتا</a>
+                            <a href="${baleLink}" target="_blank" class="share-bale">🟡 بله</a>
+                        </div>
                         <a href="${link}" target="_blank" class="read-more">🔗 مطالعه کامل خبر در منبع</a>
                     </div>
                 </div>
