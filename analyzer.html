@@ -1,93 +1,725 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<!DOCTYPE html><html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تحلیل‌گر امیرخوان</title>
-    <style>
-        body {
-            font-family: Tahoma;
-            background: #f0f2f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            direction: rtl;
+    <title>تحلیل حرفه‌ای خبر | امیرخوان</title><style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Tahoma, Arial, sans-serif;
+        background: linear-gradient(135deg, #eef2ff, #f8fafc);
+        color: #172033;
+        min-height: 100vh;
+    }
+
+    .container {
+        width: 94%;
+        max-width: 900px;
+        margin: 30px auto;
+    }
+
+    .header {
+        background: linear-gradient(135deg, #1d4ed8, #2563eb);
+        color: white;
+        padding: 28px;
+        border-radius: 28px;
+        text-align: center;
+        box-shadow: 0 12px 30px rgba(37, 99, 235, .18);
+        margin-bottom: 20px;
+    }
+
+    .header h1 {
+        margin: 0 0 10px;
+        font-size: 28px;
+    }
+
+    .header p {
+        margin: 0;
+        opacity: .9;
+        font-size: 14px;
+    }
+
+    .card {
+        background: white;
+        border-radius: 24px;
+        padding: 24px;
+        margin-bottom: 18px;
+        box-shadow: 0 8px 25px rgba(15, 23, 42, .07);
+    }
+
+    .card h2 {
+        margin-top: 0;
+        font-size: 20px;
+    }
+
+    textarea {
+        width: 100%;
+        min-height: 190px;
+        resize: vertical;
+        border: 2px solid #e2e8f0;
+        border-radius: 18px;
+        padding: 16px;
+        font-size: 16px;
+        line-height: 2;
+        font-family: inherit;
+        outline: none;
+        transition: .2s;
+    }
+
+    textarea:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 4px rgba(59,130,246,.1);
+    }
+
+    .counter {
+        color: #64748b;
+        font-size: 13px;
+        margin-top: 8px;
+    }
+
+    .main-btn {
+        width: 100%;
+        margin-top: 16px;
+        border: none;
+        border-radius: 18px;
+        padding: 16px;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: white;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: .2s;
+    }
+
+    .main-btn:hover {
+        transform: translateY(-1px);
+    }
+
+    .main-btn:active {
+        transform: translateY(1px);
+    }
+
+    #result {
+        display: none;
+    }
+
+    .section {
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        padding: 18px;
+        margin-bottom: 14px;
+        background: #f8fafc;
+    }
+
+    .section h3 {
+        margin-top: 0;
+        font-size: 17px;
+        color: #1e40af;
+    }
+
+    .section p {
+        line-height: 2;
+        margin-bottom: 0;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .item {
+        background: white;
+        border-radius: 15px;
+        padding: 14px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .item strong {
+        display: block;
+        margin-bottom: 6px;
+        color: #334155;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 30px;
+        background: #dbeafe;
+        color: #1d4ed8;
+        font-size: 13px;
+        margin: 3px;
+    }
+
+    .important {
+        border-right: 5px solid #2563eb;
+    }
+
+    .warning {
+        border-right: 5px solid #f59e0b;
+    }
+
+    .actions {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-top: 18px;
+    }
+
+    .action-btn {
+        border: none;
+        border-radius: 15px;
+        padding: 13px;
+        background: #e0e7ff;
+        color: #1e3a8a;
+        font-family: inherit;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .action-btn:hover {
+        background: #c7d2fe;
+    }
+
+    .empty {
+        color: #64748b;
+        line-height: 2;
+    }
+
+    @media (max-width: 600px) {
+        .container {
+            width: 95%;
+            margin: 15px auto;
         }
-        .box {
-            background: white;
-            padding: 30px;
-            border-radius: 30px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-            width: 90%;
-            max-width: 500px;
-            text-align: center;
+
+        .header {
+            padding: 22px 16px;
+            border-radius: 22px;
         }
-        textarea {
-            width: 100%;
-            height: 100px;
-            border-radius: 16px;
-            border: 2px solid #ddd;
-            padding: 12px;
-            font-size: 16px;
-            font-family: inherit;
-            box-sizing: border-box;
+
+        .header h1 {
+            font-size: 23px;
         }
-        button {
-            margin-top: 15px;
-            padding: 14px 40px;
-            background: #3b82f6;
-            color: white;
-            border: none;
-            border-radius: 30px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
+
+        .card {
+            padding: 17px;
+            border-radius: 20px;
         }
-        #result {
-            margin-top: 20px;
-            padding: 15px;
-            background: #f8fafc;
-            border-radius: 16px;
-            display: none;
+
+        .grid,
+        .actions {
+            grid-template-columns: 1fr;
         }
-    </style>
-</head>
-<body>
-    <div class="box">
-        <h1>🧠 تحلیل‌گر امیرخوان</h1>
-        <p>متن خبر را وارد کن و روی دکمه بزن</p>
-        <textarea id="newsText" placeholder="متن خبر را اینجا بنویس..."></textarea>
-        <button id="analyzeBtn">✨ تحلیل کن</button>
-        <div id="result"></div>
+    }
+</style>
+
+</head><body><div class="container"><div class="header">
+    <h1>🧠 تحلیل حرفه‌ای خبر</h1>
+    <p>دستیار تحلیل و آماده‌سازی خبر برای خبرنگاران</p>
+</div>
+
+<div class="card">
+    <h2>📰 متن خبر</h2>
+
+    <textarea id="newsText"
+        placeholder="متن خبر را اینجا وارد یا جای‌گذاری کنید..."></textarea>
+
+    <div class="counter">
+        تعداد کلمات: <span id="wordCount">0</span>
     </div>
 
-    <script>
-        document.getElementById('analyzeBtn').addEventListener('click', function() {
-            const text = document.getElementById('newsText').value.trim();
-            const resultDiv = document.getElementById('result');
+    <button class="main-btn" id="analyzeBtn">
+        ✨ تحلیل حرفه‌ای خبر
+    </button>
+</div>
 
-            if (text === '') {
-                alert('⚠️ لطفاً یک متن وارد کن.');
-                return;
-            }
+<div id="result">
 
-            // تحلیل ساده
-            const words = text.split(' ');
-            const wordCount = words.length;
-            const hasPolitical = text.includes('دولت') || text.includes('سیاست') || text.includes('رئیس‌جمهور');
-            const hasEconomic = text.includes('دلار') || text.includes('قیمت') || text.includes('بازار');
+    <div class="card">
+        <div class="section important">
+            <h3>📌 خلاصه خبر</h3>
+            <p id="summary"></p>
+        </div>
 
-            let analysis = `📊 تعداد کلمات: ${wordCount}\n`;
-            analysis += hasPolitical ? '🏛️ این خبر دارای محتوای سیاسی است.\n' : '';
-            analysis += hasEconomic ? '💰 این خبر دارای محتوای اقتصادی است.\n' : '';
-            analysis += wordCount > 20 ? '📝 این خبر نسبتاً مفصل است.\n' : '📝 این خبر کوتاه است.\n';
+        <div class="section">
+            <h3>🧩 ۵W1H</h3>
 
-            resultDiv.style.display = 'block';
-            resultDiv.innerHTML = `<pre style="text-align:right;font-family:Tahoma;">${analysis}</pre>`;
-        });
-    </script>
-</body>
+            <div class="grid">
+                <div class="item">
+                    <strong>👤 چه کسی؟</strong>
+                    <span id="who"></span>
+                </div>
+
+                <div class="item">
+                    <strong>📌 چه چیزی؟</strong>
+                    <span id="what"></span>
+                </div>
+
+                <div class="item">
+                    <strong>📍 کجا؟</strong>
+                    <span id="where"></span>
+                </div>
+
+                <div class="item">
+                    <strong>⏰ چه زمانی؟</strong>
+                    <span id="when"></span>
+                </div>
+
+                <div class="item">
+                    <strong>❓ چرا؟</strong>
+                    <span id="why"></span>
+                </div>
+
+                <div class="item">
+                    <strong>⚙️ چگونه؟</strong>
+                    <span id="how"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>🏷️ موضوع خبر</h3>
+            <div id="topics"></div>
+        </div>
+
+        <div class="section">
+            <h3>📊 اهمیت خبر</h3>
+            <p id="importance"></p>
+        </div>
+
+        <div class="section">
+            <h3>👥 افراد و سازمان‌های مهم</h3>
+            <p id="entities"></p>
+        </div>
+
+        <div class="section">
+            <h3>🔢 آمار و اعداد</h3>
+            <p id="numbers"></p>
+        </div>
+
+        <div class="section warning">
+            <h3>⚠️ مواردی که خبرنگار باید بررسی کند</h3>
+            <p id="claims"></p>
+        </div>
+
+        <div class="section">
+            <h3>📰 تیترهای پیشنهادی</h3>
+            <div id="titles"></div>
+        </div>
+
+        <div class="section important">
+            <h3>✍️ لید پیشنهادی</h3>
+            <p id="lead"></p>
+        </div>
+
+        <div class="section">
+            <h3>🔍 کلیدواژه‌های SEO</h3>
+            <div id="keywords"></div>
+        </div>
+
+        <div class="section">
+            <h3>💡 زاویه‌های پیشنهادی برای خبرنگار</h3>
+            <div id="angles"></div>
+        </div>
+
+        <div class="section">
+            <h3>🎤 سؤالات پیشنهادی برای مصاحبه</h3>
+            <div id="questions"></div>
+        </div>
+
+        <div class="actions">
+            <button class="action-btn" onclick="copyAnalysis()">
+                📋 کپی تحلیل
+            </button>
+
+            <button class="action-btn" onclick="window.print()">
+                🖨️ چاپ / ذخیره
+            </button>
+
+            <button class="action-btn" onclick="alert('این قابلیت در مرحله بعد فعال می‌شود.')">
+                ✍️ تبدیل به گزارش
+            </button>
+
+            <button class="action-btn" onclick="alert('این قابلیت در مرحله بعد فعال می‌شود.')">
+                📱 شبکه‌های اجتماعی
+            </button>
+        </div>
+
+    </div>
+</div>
+
+</div><script>
+
+const newsText = document.getElementById("newsText");
+const wordCount = document.getElementById("wordCount");
+const result = document.getElementById("result");
+
+newsText.addEventListener("input", function () {
+
+    const text = newsText.value.trim();
+
+    if (!text) {
+        wordCount.textContent = "0";
+        return;
+    }
+
+    const words = text.split(/\s+/);
+    wordCount.textContent = words.length;
+});
+
+document.getElementById("analyzeBtn").addEventListener("click", function () {
+
+    const text = newsText.value.trim();
+
+    if (!text) {
+        alert("⚠️ لطفاً ابتدا متن خبر را وارد کنید.");
+        return;
+    }
+
+    const words = text.split(/\s+/);
+    const count = words.length;
+
+    const politicalWords = [
+        "دولت", "مجلس", "رئیس جمهور", "رئیس‌جمهور",
+        "وزیر", "سیاست", "انتخابات", "نماینده"
+    ];
+
+    const economicWords = [
+        "دلار", "یورو", "اقتصاد", "قیمت",
+        "بازار", "تورم", "ارز", "سرمایه"
+    ];
+
+    const scienceWords = [
+        "علم", "دانشگاه", "پژوهش", "تحقیق",
+        "فناوری", "هوش مصنوعی", "محقق", "دانشمند"
+    ];
+
+    const socialWords = [
+        "جامعه", "اجتماعی", "شهروند", "مردم",
+        "آموزش", "سلامت", "فرهنگ"
+    ];
+
+    let detectedTopics = [];
+
+    if (containsAny(text, politicalWords))
+        detectedTopics.push("سیاست");
+
+    if (containsAny(text, economicWords))
+        detectedTopics.push("اقتصاد");
+
+    if (containsAny(text, scienceWords))
+        detectedTopics.push("علم و فناوری");
+
+    if (containsAny(text, socialWords))
+        detectedTopics.push("جامعه");
+
+    if (detectedTopics.length === 0)
+        detectedTopics.push("عمومی");
+
+    document.getElementById("summary").textContent =
+        createSummary(text);
+
+    document.getElementById("who").textContent =
+        extractPerson(text);
+
+    document.getElementById("what").textContent =
+        createWhat(text);
+
+    document.getElementById("where").textContent =
+        extractPlace(text);
+
+    document.getElementById("when").textContent =
+        extractTime(text);
+
+    document.getElementById("why").textContent =
+        "نیازمند بررسی دقیق متن و منبع اصلی خبر است.";
+
+    document.getElementById("how").textContent =
+        "بر اساس اطلاعات موجود در متن خبر بررسی شود.";
+
+    document.getElementById("topics").innerHTML =
+        detectedTopics.map(x => `<span class="badge">${x}</span>`).join("");
+
+    document.getElementById("importance").textContent =
+        detectImportance(text, count);
+
+    document.getElementById("entities").textContent =
+        extractEntities(text);
+
+    document.getElementById("numbers").textContent =
+        extractNumbers(text);
+
+    document.getElementById("claims").textContent =
+        "نام افراد، آمار، ارقام، نقل‌قول‌ها و ادعاهای اصلی خبر باید با منبع اولیه یا منابع مستقل بررسی شوند.";
+
+    document.getElementById("titles").innerHTML =
+        createTitles(text);
+
+    document.getElementById("lead").textContent =
+        createLead(text);
+
+    document.getElementById("keywords").innerHTML =
+        createKeywords(text);
+
+    document.getElementById("angles").innerHTML =
+        createAngles(detectedTopics);
+
+    document.getElementById("questions").innerHTML =
+        createQuestions(detectedTopics);
+
+    result.style.display = "block";
+
+    result.scrollIntoView({
+        behavior: "smooth"
+    });
+});
+
+function containsAny(text, words) {
+    return words.some(word => text.includes(word));
+}
+
+function createSummary(text) {
+
+    const sentences = text
+        .split(/[.!؟\n]+/)
+        .map(x => x.trim())
+        .filter(x => x.length > 15);
+
+    if (sentences.length === 0)
+        return text.slice(0, 300);
+
+    return sentences.slice(0, 2).join("؛ ");
+}
+
+function createWhat(text) {
+
+    const sentences = text
+        .split(/[.!؟\n]+/)
+        .map(x => x.trim())
+        .filter(x => x.length > 15);
+
+    return sentences.length
+        ? sentences[0]
+        : "رویداد اصلی از متن استخراج نشد.";
+}
+
+function extractPerson(text) {
+
+    const patterns = [
+        /(?:به گفته|به گزارش|اظهار کرد|گفت|اعلام کرد)\s+([^،.؟]+)/,
+        /(?:آقای|خانم|دکتر|مهندس)\s+([^،.؟]+)/
+    ];
+
+    for (const pattern of patterns) {
+
+        const match = text.match(pattern);
+
+        if (match)
+            return match[1].trim();
+    }
+
+    return "نام شخص مشخصی به‌صورت قطعی استخراج نشد.";
+}
+
+function extractPlace(text) {
+
+    const places = [
+        "تهران", "اصفهان", "شیراز", "مشهد",
+        "تبریز", "قم", "کرج", "اهواز",
+        "ایران", "آمریکا", "چین", "روسیه",
+        "اروپا", "لندن", "پاریس", "نیویورک"
+    ];
+
+    const found = places.filter(place => text.includes(place));
+
+    return found.length
+        ? found.join("، ")
+        : "مکان مشخصی شناسایی نشد.";
+}
+
+function extractTime(text) {
+
+    const patterns = [
+        /\d{4}\/\d{1,2}\/\d{1,2}/g,
+        /\d{1,2}\s+(?:روز|ماه|سال)\s+(?:گذشته|آینده)/g,
+        /امروز|دیروز|فردا|امسال|سال گذشته|سال آینده/g
+    ];
+
+    let results = [];
+
+    patterns.forEach(pattern => {
+
+        const matches = text.match(pattern);
+
+        if (matches)
+            results.push(...matches);
+    });
+
+    return results.length
+        ? [...new Set(results)].join("، ")
+        : "زمان دقیق از متن استخراج نشد.";
+}
+
+function extractNumbers(text) {
+
+    const matches = text.match(
+        /\d+(?:[.,]\d+)?(?:\s*(?:درصد|میلیون|میلیارد|هزار|کیلومتر|نفر|تومان|دلار|یورو))?/g
+    );
+
+    return matches && matches.length
+        ? [...new Set(matches)].join("، ")
+        : "عدد یا آمار مشخصی پیدا نشد.";
+}
+
+function extractEntities(text) {
+
+    const organizations = [
+        "دولت", "مجلس", "شهرداری",
+        "دانشگاه", "وزارت", "سازمان",
+        "بانک مرکزی", "سازمان ملل"
+    ];
+
+    const found = organizations.filter(x => text.includes(x));
+
+    return found.length
+        ? found.join("، ")
+        : "سازمان مشخصی شناسایی نشد.";
+}
+
+function detectImportance(text, count) {
+
+    const urgentWords = [
+        "فوری", "بحران", "زلزله",
+        "انفجار", "جنگ", "کشته",
+        "فوت", "هشدار"
+    ];
+
+    if (containsAny(text, urgentWords))
+        return "🔴 بسیار مهم / نیازمند بررسی فوری";
+
+    if (count > 150)
+        return "🟠 مهم؛ متن دارای اطلاعات نسبتاً گسترده است.";
+
+    if (count > 70)
+        return "🟡 مهم؛ نیازمند بررسی بیشتر.";
+
+    return "🟢 عادی؛ برای انتشار به بررسی منبع و اطلاعات تکمیلی نیاز دارد.";
+}
+
+function createTitles(text) {
+
+    const firstSentence = text
+        .split(/[.!؟\n]+/)
+        .map(x => x.trim())
+        .filter(x => x.length > 15)[0] || text;
+
+    return `
+        <div class="item">📰 ${firstSentence.slice(0, 90)}</div>
+        <br>
+        <div class="item">🔎 جزئیات تازه درباره ${firstSentence.slice(0, 60)}</div>
+        <br>
+        <div class="item">📌 مهم‌ترین نکته در خبر: ${firstSentence.slice(0, 70)}</div>
+    `;
+}
+
+function createLead(text) {
+
+    const sentence = text
+        .split(/[.!؟\n]+/)
+        .map(x => x.trim())
+        .filter(x => x.length > 20)[0];
+
+    if (!sentence)
+        return text.slice(0, 250);
+
+    return sentence + "؛ جزئیات بیشتر این موضوع در ادامه بررسی می‌شود.";
+}
+
+function createKeywords(text) {
+
+    const stopWords = [
+        "این", "آن", "برای", "است", "شد",
+        "شود", "که", "در", "به", "از",
+        "با", "یک", "و", "را", "بر",
+        "کرد", "کرده", "دارد"
+    ];
+
+    const words = text
+        .replace(/[،؛,.!?؟:()"«»]/g, " ")
+        .split(/\s+/)
+        .filter(word => word.length > 3)
+        .filter(word => !stopWords.includes(word));
+
+    const frequency = {};
+
+    words.forEach(word => {
+        frequency[word] = (frequency[word] || 0) + 1;
+    });
+
+    const keywords = Object.entries(frequency)
+        .sort((a,b) => b[1] - a[1])
+        .slice(0, 8)
+        .map(x => x[0]);
+
+    return keywords.length
+        ? keywords.map(x => `<span class="badge">${x}</span>`).join("")
+        : "<span class='empty'>کلیدواژه‌ای پیدا نشد.</span>";
+}
+
+function createAngles(topics) {
+
+    const angles = [
+        "پیامدهای این خبر برای مردم چیست؟",
+        "چه کسانی از این اتفاق تأثیر می‌پذیرند؟",
+        "آیا آمار و ادعاهای مطرح‌شده قابل تأیید هستند؟"
+    ];
+
+    if (topics.includes("اقتصاد"))
+        angles.push("تأثیر این موضوع بر قیمت‌ها، بازار و اقتصاد چیست؟");
+
+    if (topics.includes("سیاست"))
+        angles.push("واکنش جریان‌ها و مسئولان مختلف به این موضوع چیست؟");
+
+    if (topics.includes("علم و فناوری"))
+        angles.push("این اتفاق چه تأثیری بر آینده علم و فناوری دارد؟");
+
+    return angles
+        .map(x => `<div class="item">💡 ${x}</div><br>`)
+        .join("");
+}
+
+function createQuestions(topics) {
+
+    const questions = [
+        "منبع اصلی این ادعا چیست؟",
+        "آیا آمار ارائه‌شده منبع رسمی دارد؟",
+        "چه اطلاعاتی هنوز درباره این موضوع منتشر نشده است؟",
+        "مهم‌ترین پیامد این اتفاق چیست؟",
+        "نظر کارشناسان مستقل درباره این موضوع چیست؟"
+    ];
+
+    if (topics.includes("اقتصاد"))
+        questions.push("این موضوع چه تأثیری بر اقتصاد و قیمت‌ها خواهد داشت؟");
+
+    if (topics.includes("سیاست"))
+        questions.push("موضع رسمی طرف‌های مختلف درباره این موضوع چیست؟");
+
+    return questions
+        .map((x,i) => `<div class="item">${i + 1}. ${x}</div><br>`)
+        .join("");
+}
+
+function copyAnalysis() {
+
+    const resultText = document.getElementById("result").innerText;
+
+    navigator.clipboard.writeText(resultText)
+        .then(() => alert("✅ تحلیل با موفقیت کپی شد."))
+        .catch(() => alert("⚠️ کپی خودکار انجام نشد."));
+}
+
+</script></body>
 </html>
